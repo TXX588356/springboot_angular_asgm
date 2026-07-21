@@ -82,7 +82,7 @@ public class FoodItemController {
     }
 
     // GET /api/foods/filter?category={category}&maxCalories={maxCalories}
-    @GetMapping("filter")
+    @GetMapping("/filter")
     public List<FoodItem> filterFoods(
         @RequestParam(required = false) String category,
         @RequestParam(required = false) Integer maxCalories) {
