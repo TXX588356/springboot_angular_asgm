@@ -32,22 +32,22 @@ public class FoodItemController {
         this.foodItemService = foodItemService;
     }
 
-    // GET /api/foods
-    // get full food list
+    // GET /api/foods?sortBy=calories&direction=desc
     @GetMapping
-    public List<FoodItem> getAllFoods() {
-        return foodItemService.getAllFoods();
+    public List<FoodItem> getAllFoods(
+        @RequestParam(defaultValue = "name") String sortBy,
+        @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return foodItemService.getAllFoods(sortBy, direction);
     }
 
     // GET /api/foods/{id}
-    // get specific food
     @GetMapping("/{id}")
     public FoodItem getFoodById(@PathVariable Long id) {
         return foodItemService.getFoodById(id);
     }
 
     // POST /api/foods
-    // add food item
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FoodItem createFood(@Valid @RequestBody FoodItem foodItem) {
@@ -55,7 +55,6 @@ public class FoodItemController {
     }
 
     // PUT /api/foods/{id}
-    // update one food item
     @PutMapping("/{id}")
     public FoodItem updateFood(@PathVariable Long id,@Valid @RequestBody FoodItem foodItem) {
        return foodItemService.updateFood(id, foodItem);

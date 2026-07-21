@@ -3,6 +3,7 @@ package com.example.meal_catalogue_planner.service;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,9 +19,17 @@ public class FoodItemService {
         this.foodItemRepository = foodItemRepository;
     }
 
-    // Get every food item.
-    public List<FoodItem> getAllFoods() {
-        return foodItemRepository.findAll();
+    // Get every food item sotred by selected field.
+    public List<FoodItem> getAllFoods(String sortBy, String direction) {
+        Sort sort = Sort.by(sortBy);
+
+        if("desc".equalsIgnoreCase(direction)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        return foodItemRepository.findAll(sort);
     }
 
     public FoodItem getFoodById(Long id) {
