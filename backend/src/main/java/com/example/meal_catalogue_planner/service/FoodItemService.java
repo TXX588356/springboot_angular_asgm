@@ -1,9 +1,11 @@
 package com.example.meal_catalogue_planner.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,12 +13,66 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.meal_catalogue_planner.entity.FoodItem;
 import com.example.meal_catalogue_planner.repository.FoodItemRepository;
 
+import jakarta.persistence.criteria.Predicate;
+
 @Service
 public class FoodItemService {
     private final FoodItemRepository foodItemRepository;
 
     public FoodItemService(FoodItemRepository foodItemRepository) {
         this.foodItemRepository = foodItemRepository;
+    }
+
+    // Search, filter, sorting all can be applied together
+    public List<FoodItem> findFoods(
+        String name, 
+        String category,
+        Integer maxCalories,
+        String sortBy,
+        String direction
+    ) {
+        Sort sort = buildSort(sortBy, direction);
+
+        Specification<FoodItem> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (name != null && !name.isBlank()) {
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("name")),
+                    "%" + name.toLowerCase()  + "%"));
+            }
+            if (category != null && !category.isBlank()) {
+                predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("category")),
+                    category.toLowerCase()
+                ));
+            }
+
+            if (maxCalories != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                    root.get("calories"), 
+                    maxCalories));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return foodItemRepository.findAll(spec, sort);
+
+    }
+
+    // Only allow sorting by real FoodItem fields.
+    private Sort buildSort(String sortBy, String direction) {
+        String safeSortBy = switch (sortBy) {
+            case "name", "category", "calories", "price" -> sortBy;
+            default -> "name";
+        };
+
+        if ("desc".equalsIgnoreCase(direction)) {
+            return Sort.by(safeSortBy).descending();
+        }
+        
+        return Sort.by(safeSortBy).ascending();
     }
 
     // Get every food item sotred by selected field.
@@ -89,6 +145,28 @@ public class FoodItemService {
 
     // Filter foods by cat and max calories.
     public List<FoodItem> filterFoods(String category, Integer maxCalories) {
-        return foodItemRepository.filterFoods(category, maxCalories);
+        boolean hasCategory = category != null && !category.isBlank();
+        boolean hasMaxCalories = maxCalories != null;
+
+        // Case 1: category + maxCalories
+        if (hasCategory && hasMaxCalories) {
+            return foodItemRepository.findByCategoryIgnoreCaseAndCaloriesLessThanEqualOrderByNameAsc(
+                category, 
+                maxCalories
+            );
+        }
+
+        // Case 2: only category
+        if (hasCategory) {
+            return foodItemRepository.findByCategoryIgnoreCaseOrderByNameAsc(category);
+        }
+
+        // Case 3: only max calories
+        if (hasMaxCalories) {
+            return foodItemRepository.findByCaloriesLessThanEqualOrderByNameAsc(maxCalories);
+        }
+
+        // Case 4: no filter
+        return foodItemRepository.findAll();
     }
 }

@@ -32,14 +32,25 @@ public class FoodItemController {
         this.foodItemService = foodItemService;
     }
 
-    // GET /api/foods?sortBy=calories&direction=desc
     @GetMapping
-    public List<FoodItem> getAllFoods(
-        @RequestParam(defaultValue = "name") String sortBy,
-        @RequestParam(defaultValue = "asc") String direction
+    public List<FoodItem> findFoods(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String category,
+        @RequestParam(required = false) Integer maxCalories,
+        @RequestParam(required = false) String sortBy,
+        @RequestParam(required = false) String direction
     ) {
-        return foodItemService.getAllFoods(sortBy, direction);
+        return foodItemService.findFoods(name, category, maxCalories, sortBy, direction);
     }
+
+    // GET /api/foods?sortBy=calories&direction=desc
+    // @GetMapping
+    // public List<FoodItem> getAllFoods(
+    //     @RequestParam(defaultValue = "name") String sortBy,
+    //     @RequestParam(defaultValue = "asc") String direction
+    // ) {
+    //     return foodItemService.getAllFoods(sortBy, direction);
+    // }
 
     // GET /api/foods/{id}
     @GetMapping("/{id}")
