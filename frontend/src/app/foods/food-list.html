@@ -1,0 +1,62 @@
+<h1>Food Catalogue</h1>
+<div>
+	<input 
+		type="text"
+		placeholder="Search food name"
+		[(ngModel)]="searchText"	
+	/>
+	<button type="button" (click)="applyQuery()">Search</button>
+</div>
+
+<div>
+	<input 
+		type="text"
+		placeholder="Category"
+		[(ngModel)]="category"
+	>
+
+	<input 
+		type="number"
+		placeholder="Max calories"
+		[(ngModel)]="maxCalories"
+	>
+
+	<button type="button" (click)="applyQuery()">Filter</button>
+</div>
+
+<div>
+	<select [(ngModel)]="sortBy">
+		<option value="name">Name</option>
+		<option value="category">Category</option>
+		<option value="calories">Calories</option>
+		<option value="price">Price</option>
+	</select>
+
+	<select [(ngModel)]="direction">
+		<option value="asc">Ascending</option>
+		<option value="desc">Descending</option>
+	</select>
+
+	<button type="button" (click)="applyQuery()">Sort</button>
+</div>
+
+@if (loading()) {
+	<p>Loading foods...</p>
+} @else if (error()) {
+	<p class="error">{{ error() }}</p>
+} @else {
+	<p>Total Foods: {{ foods().length }}</p>
+
+	@for (food of foods(); track food.id) {
+		<div class="food-card">
+			<h2>{{ food.name }}</h2>
+			<p>Category: {{ food.category }}</p>
+			<p>Serving: {{ food.servingSize }}</p>
+			<p>Calories: {{ food.calories }}</p>
+			<p>Protein: {{ food.protein }}g</p>
+			<p>Carbs: {{ food.carbohydrates }}g</p>
+			<p>Fat: {{ food.fat }}g</p>
+			<p>Price: RM {{ food.price }}</p>
+		</div>
+	}
+}

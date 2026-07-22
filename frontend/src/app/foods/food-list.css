@@ -1,0 +1,17 @@
+.food-card {
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 6px;
+}
+
+input,
+select,
+button {
+  margin: 6px;
+  padding: 6px;
+}
+
+.error {
+  color: red;
+}

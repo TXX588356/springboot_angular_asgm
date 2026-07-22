@@ -1,29 +1,12 @@
-import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
-import { ApiService } from './services/api';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
-  protected readonly title = signal('frontend');
-  protected readonly message = signal('Checking backend connection...');
+export class App {
 
-  constructor(
-    private apiService: ApiService,
-    @Inject(PLATFORM_ID) private platformId: object
-  ) {}
-
-  ngOnInit(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    this.apiService.getHello().subscribe({
-      next: (response) => this.message.set(response),
-      error: () => this.message.set('Backend connection failed')
-    });
-  }
 }
