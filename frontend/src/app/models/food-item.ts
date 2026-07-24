@@ -3,7 +3,7 @@ export interface FoodItem {
     id: number,
     name: string,
     category: string,
-    calories: string,
+    calories: number,
     protein: number,
     carbohydrates: number,
     fat: number,

@@ -59,4 +59,9 @@ export class FoodService {
 
         return this.http.get<FoodItem[]>(`${this.apiUrl}/filter`, { params })
     }
+
+    // Delete a food by ID
+    deleteFood(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    }
 }

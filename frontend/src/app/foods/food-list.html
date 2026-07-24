@@ -48,15 +48,9 @@
 	<p>Total Foods: {{ foods().length }}</p>
 
 	@for (food of foods(); track food.id) {
-		<div class="food-card">
-			<h2>{{ food.name }}</h2>
-			<p>Category: {{ food.category }}</p>
-			<p>Serving: {{ food.servingSize }}</p>
-			<p>Calories: {{ food.calories }}</p>
-			<p>Protein: {{ food.protein }}g</p>
-			<p>Carbs: {{ food.carbohydrates }}g</p>
-			<p>Fat: {{ food.fat }}g</p>
-			<p>Price: RM {{ food.price }}</p>
-		</div>
+		<app-food-card 
+			[food]="food"
+			(deleteFood)="deleteFood($event)"
+		/>
 	}
 }

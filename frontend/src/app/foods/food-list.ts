@@ -2,10 +2,11 @@ import { Component, OnInit, signal } from "@angular/core";
 import { FoodItem } from "../models/food-item";
 import { FormsModule } from "@angular/forms";
 import { FoodService } from "../services/food.service";
+import { FoodCard } from "./food-card/food-card";
 
 @Component({
     selector: 'app-food-list',
-    imports: [FormsModule],
+    imports: [FormsModule, FoodCard],
     templateUrl: './food-list.html',
     styleUrl: './food-list.css',
 })
@@ -46,6 +47,17 @@ export class FoodList implements OnInit {
             error: () => {
                 this.error.set('Failed to load foods')
                 this.loading.set(false)
+            }
+        })
+    }
+
+    deleteFood(id: number): void {
+        this.foodService.deleteFood(id).subscribe({
+            next: () => {
+                this.applyQuery()
+            },
+            error: () => {
+                this.error.set('Delete failed')
             }
         })
     }

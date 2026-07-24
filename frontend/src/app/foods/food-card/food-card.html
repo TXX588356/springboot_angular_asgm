@@ -1,0 +1,15 @@
+<div class="food-card">
+    <h2>{{ food.name }}</h2>
+
+    <p>Category: {{ food.category }}</p>
+    <p>Serving Size: {{ food.servingSize }}</p>
+
+    <app-nutrition-badge [calories]="food.calories"></app-nutrition-badge>
+
+    <p>Protein: {{ food.protein }}</p>
+    <p>Carbs: {{ food.carbohydrates }}</p>
+    <p>Fat: {{ food.fat }}</p>
+    <p>Price: RM {{ food.price }}</p>
+
+    <button type="button" (click)="onDelete()">Delete</button>
+</div>
