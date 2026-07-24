@@ -12,4 +12,6 @@
     <p>Price: RM {{ food.price }}</p>
 
     <button type="button" (click)="onDelete()">Delete</button>
+    
+    <a [routerLink]="['/foods', food.id, 'edit']">Edit</a>
 </div>

@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { NutritionBadge } from "../nutrition-badge/nutrition-badge";
 import { FoodItem } from "../../models/food-item";
+import { RouterLink } from "@angular/router";
 
 @Component({
     selector: 'app-food-card',
-    imports: [NutritionBadge],
+    imports: [NutritionBadge, RouterLink],
     templateUrl: './food-card.html',
     styleUrl: './food-card.css',
 })
@@ -19,5 +20,4 @@ export class FoodCard {
     onDelete(): void {
         this.deleteFood.emit(this.food.id)
     }
-
 }

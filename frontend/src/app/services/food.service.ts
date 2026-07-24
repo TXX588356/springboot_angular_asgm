@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { FoodItem } from "../models/food-item";
 import { Observable } from "rxjs";
 import { HttpClient, HttpParams } from "@angular/common/http";
+import { FoodRequest } from "../models/food-request";
 
 @Injectable({
     providedIn: 'root'
@@ -37,6 +38,21 @@ export class FoodService {
         }
 
         return this.http.get<FoodItem[]>(this.apiUrl, { params })
+    }
+
+    // Get one food by ID
+    getFoodById(id: number): Observable<FoodItem> {
+        return this.http.get<FoodItem>(`${this.apiUrl}/${id}`)
+    }
+
+    // Create one food
+    createFood(food: FoodRequest): Observable<FoodItem> {
+        return this.http.post<FoodItem>(this.apiUrl, food)
+    }
+
+    // Update food
+    updateFood(id: number, food: FoodRequest): Observable<FoodItem> {
+        return this.http.put<FoodItem>(`${this.apiUrl}/${id}`, food)
     }
 
     // Search foods by name.

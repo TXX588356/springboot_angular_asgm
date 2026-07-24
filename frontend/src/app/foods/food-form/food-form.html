@@ -1,0 +1,107 @@
+<h1>
+    @if (isEditMode) {
+        Edit Food
+    } @else {
+        Add Food
+    }
+</h1>
+
+@if (loading()) {
+    <p>Loading...</p>
+}
+
+@if (error()) {
+    <p class="error">{{ error() }}</p>
+}
+
+<form [formGroup]="foodForm" (ngSubmit)="saveFood()">
+	<div>
+		<label>Name</label>
+		<input type="text" formControlName="name" />
+
+		@if (foodForm.get('name')?.touched && foodForm.get('name')?.hasError('required')) {
+				<p class="error">Name is required</p>
+		}
+
+		@if (foodForm.get('name')?.hasError('minlength')) {
+				<p class="error">Name must be at least 2 characters</p>
+		}
+	</div>
+
+	<div>
+		<label>Category</label>
+		<input type="text" formControlName="category" />
+
+		@if (foodForm.get('category')?.touched && foodForm.get('category')?.hasError('required')) {
+				<p class="error">Category is required</p>
+		}
+	</div>
+
+	<div>
+		<label>Serving Size</label>
+		<input type="text" formControlName="servingSize" />
+
+		@if (foodForm.get('servingSize')?.touched && foodForm.get('servingSize')?.hasError('required')) {
+			<p class="error">Serving size is required</p>
+		}
+	</div>
+
+		<div>
+		<label>Calories</label>
+		<input type="number" formControlName="calories" />
+
+		@if (foodForm.get('calories')?.touched && foodForm.get('calories')?.hasError('required')) {
+			<p class="error">Calories is required</p>
+		}
+
+		@if (foodForm.get('calories')?.hasError('min')) {
+			<p class="error">Calories must be greater than 0</p>
+		}
+	</div>
+
+	<div>
+    <label>Price</label>
+    <input type="number" formControlName="price" />
+
+    @if (foodForm.get('price')?.hasError('min')) {
+      <p class="error">Price must be 0 or greater</p>
+    }
+  </div>
+
+  <fieldset formGroupName="nutrition">
+    <legend>Nutrition</legend>
+
+    <div>
+      <label>Protein</label>
+      <input type="number" formControlName="protein" />
+
+      @if (foodForm.get('nutrition.protein')?.hasError('min')) {
+        <p class="error">Protein must be 0 or greater</p>
+      }
+    </div>
+
+    <div>
+      <label>Carbohydrates</label>
+      <input type="number" formControlName="carbohydrates" />
+
+      @if (foodForm.get('nutrition.carbohydrates')?.hasError('min')) {
+        <p class="error">Carbohydrates must be 0 or greater</p>
+      }
+    </div>
+
+    <div>
+      <label>Fat</label>
+      <input type="number" formControlName="fat" />
+
+      @if (foodForm.get('nutrition.fat')?.hasError('min')) {
+        <p class="error">Fat must be 0 or greater</p>
+      }
+    </div>
+  </fieldset>
+
+	<button type="submit" [disabled]="foodForm.invalid || loading()">Save</button>
+
+	<button type="button" (click)="cancel()">Cancel</button>
+
+
+</form>

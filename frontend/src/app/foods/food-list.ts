@@ -1,12 +1,14 @@
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, Inject, OnInit, PLATFORM_ID, signal } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { FoodItem } from "../models/food-item";
 import { FormsModule } from "@angular/forms";
 import { FoodService } from "../services/food.service";
 import { FoodCard } from "./food-card/food-card";
+import { RouterLink } from "@angular/router";
 
 @Component({
     selector: 'app-food-list',
-    imports: [FormsModule, FoodCard],
+    imports: [FormsModule, FoodCard, RouterLink],
     templateUrl: './food-list.html',
     styleUrl: './food-list.css',
 })
@@ -22,10 +24,17 @@ export class FoodList implements OnInit {
     sortBy = 'name'
     direction = 'asc'
 
-    constructor(private foodService: FoodService) {}
+    constructor(
+        private foodService: FoodService,
+        @Inject(PLATFORM_ID) private platformId: object,
+    ) {}
 
     // Load foods when the page opens.
     ngOnInit(): void {
+        if (!isPlatformBrowser(this.platformId)) {
+            return
+        }
+
         this.applyQuery()
     }
 
