@@ -1,0 +1,45 @@
+@if (loading()) {
+  <p>Loading food...</p>
+} @else if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else if(food()) {
+  <div class="detail-page">
+    <div class="page-heading">
+      <div>
+        <p class="text-base-content/70">Food Detail</p>
+        <h1 class="text-3xl font-bold">{{ food()!.name }}</h1>
+      </div>
+
+      <div class="actions">
+        <a [routerLink]="['/foods']" class="btn btn-ghost">Back</a>
+        <a [routerLink]="['/foods', food()!.id, 'edit']" class="btn btn-info">Edit</a>
+        <a [routerLink]="['nutrition']" class="btn btn-outline">Nutrition</a>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body">
+        <div class="detail-grid">
+          <div>
+            <span class="label">Category</span>
+            <strong>{{ food()!.category }}</strong>
+          </div>
+          <div>
+            <span class="label">Serving Size</span>
+            <strong>{{ food()!.servingSize }}</strong>
+          </div>
+          <div>
+            <span class="label">Calories</span>
+            <strong>{{ food()!.calories }} kcal</strong>
+          </div>
+          <div>
+            <span class="label">Price</span>
+            <strong>RM {{ food()!.price }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <router-outlet />
+  </div>
+}

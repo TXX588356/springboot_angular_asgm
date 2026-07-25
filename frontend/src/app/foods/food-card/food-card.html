@@ -1,17 +1,21 @@
-<div class="food-card">
-    <h2>{{ food.name }}</h2>
+<div class="card bg-base-100 border border-base-300 shadow-sm h-full">
+    <div class="card-body">
+        <div class="card-title justify-between gap-3">
+            <h2>{{ food.name }}</h2>
+            <app-nutrition-badge [calories]="food.calories"></app-nutrition-badge>
+        </div>
 
-    <p>Category: {{ food.category }}</p>
-    <p>Serving Size: {{ food.servingSize }}</p>
+        <p>Category: {{ food.category }}</p>
+        <p>Serving Size: {{ food.servingSize }}</p>
+        <p>Protein: {{ food.protein }}g</p>
+        <p>Carbs: {{ food.carbohydrates }}g</p>
+        <p>Fat: {{ food.fat }}g</p>
+        <p>Price: RM {{ food.price }}</p>
 
-    <app-nutrition-badge [calories]="food.calories"></app-nutrition-badge>
-
-    <p>Protein: {{ food.protein }}</p>
-    <p>Carbs: {{ food.carbohydrates }}</p>
-    <p>Fat: {{ food.fat }}</p>
-    <p>Price: RM {{ food.price }}</p>
-
-    <button type="button" (click)="onDelete()">Delete</button>
-    
-    <a [routerLink]="['/foods', food.id, 'edit']">Edit</a>
+        <div class="card-actions food-actions mt-2">
+            <a [routerLink]="['/foods', food.id]" class="btn btn-sm btn-outline">View</a>
+            <a [routerLink]="['/foods', food.id, 'edit']" class="btn btn-sm btn-info">Edit</a>
+            <button class="btn btn-sm btn-error" type="button" (click)="onDelete()">Delete</button>
+        </div>
+    </div>
 </div>

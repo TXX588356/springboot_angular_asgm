@@ -1,46 +1,46 @@
-<h1>Food Catalogue</h1>
-
-<a routerLink="/foods/new">Add Food</a>
-
-<div>
-	<input 
-		type="text"
-		placeholder="Search food name"
-		[(ngModel)]="searchText"	
-	/>
-	<button type="button" (click)="applyQuery()">Search</button>
+<div class="page-heading">
+	<div>
+		<h1 class="text-3xl font-bold">Food Catalogue</h1>
+		<p class="text-base-content/70">Search, filter, sort, and manage food records.</p>
+	</div>
+	<a routerLink="/foods/new" class="btn btn-primary">Add Food</a>
 </div>
 
-<div>
-	<input 
+<div class="filter-panel">
+	<input
+		type="text"
+		placeholder="Search food name"
+		[(ngModel)]="searchText"
+		class="input input-bordered w-full"
+	/>
+
+	<input
 		type="text"
 		placeholder="Category"
 		[(ngModel)]="category"
-	>
+		class="input input-bordered w-full"
+	/>
 
-	<input 
+	<input
 		type="number"
 		placeholder="Max calories"
 		[(ngModel)]="maxCalories"
-	>
+		class="input input-bordered w-full"
+	/>
 
-	<button type="button" (click)="applyQuery()">Filter</button>
-</div>
-
-<div>
-	<select [(ngModel)]="sortBy">
+	<select [(ngModel)]="sortBy" class="select select-bordered w-full">
 		<option value="name">Name</option>
 		<option value="category">Category</option>
 		<option value="calories">Calories</option>
 		<option value="price">Price</option>
 	</select>
 
-	<select [(ngModel)]="direction">
+	<select [(ngModel)]="direction" class="select select-bordered w-full">
 		<option value="asc">Ascending</option>
 		<option value="desc">Descending</option>
 	</select>
 
-	<button type="button" (click)="applyQuery()">Sort</button>
+	<button type="button" class="btn btn-neutral" (click)="applyQuery()">Apply</button>
 </div>
 
 @if (loading()) {
@@ -48,12 +48,14 @@
 } @else if (error()) {
 	<p class="error">{{ error() }}</p>
 } @else {
-	<p>Total Foods: {{ foods().length }}</p>
+	<p class="my-4 font-medium">Total Foods: {{ foods().length }}</p>
 
-	@for (food of foods(); track food.id) {
-		<app-food-card 
-			[food]="food"
-			(deleteFood)="deleteFood($event)"
-		/>
-	}
+	<div class="food-grid">
+		@for (food of foods(); track food.id) {
+			<app-food-card
+				[food]="food"
+				(deleteFood)="deleteFood($event)"
+			/>
+		}
+	</div>
 }

@@ -1,0 +1,30 @@
+@if (loading()) {
+  <p>Loading nutrition...</p>
+} @else if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else if(food()) {
+  <div class="card bg-base-100 border border-base-300 shadow-sm nutrition-card">
+    <div class="card-body">
+      <h2 class="card-title">Nutrition</h2>
+
+      <div class="nutrition-grid">
+        <div>
+          <span>Calories</span>
+          <strong>{{ food()!.calories }} kcal</strong>
+        </div>
+        <div>
+          <span>Protein</span>
+          <strong>{{ food()!.protein }}g</strong>
+        </div>
+        <div>
+          <span>Carbohydrates</span>
+          <strong>{{ food()!.carbohydrates }}g</strong>
+        </div>
+        <div>
+          <span>Fat</span>
+          <strong>{{ food()!.fat }}g</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+}

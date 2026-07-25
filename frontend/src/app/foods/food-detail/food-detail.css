@@ -1,0 +1,53 @@
+.detail-page {
+  display: grid;
+  gap: 16px;
+}
+
+.page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.label {
+  display: block;
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+strong {
+  display: block;
+  margin-top: 4px;
+}
+
+.error {
+  color: var(--color-error);
+}
+
+@media (max-width: 760px) {
+  .page-heading {
+    display: block;
+  }
+
+  .actions {
+    margin-top: 12px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
