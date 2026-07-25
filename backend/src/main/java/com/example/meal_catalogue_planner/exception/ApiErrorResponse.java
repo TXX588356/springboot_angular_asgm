@@ -1,4 +1,4 @@
-package com.example.meal_catalogue_planner;
+package com.example.meal_catalogue_planner.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -11,5 +11,5 @@ public record ApiErrorResponse(
     String path,
     Map<String, String> fieldErrors
 ) {
-    
+
 }

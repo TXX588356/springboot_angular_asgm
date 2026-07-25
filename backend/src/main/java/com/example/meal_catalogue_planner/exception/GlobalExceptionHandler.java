@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.meal_catalogue_planner.ApiErrorResponse;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -35,7 +33,7 @@ public class GlobalExceptionHandler {
         return buildResponse(
             HttpStatus.BAD_REQUEST,
             "Validation Failed",
-            "Once or more fields are invalid",
+            "One or more fields are invalid",
             request.getRequestURI(),
             fieldErrors
         );
