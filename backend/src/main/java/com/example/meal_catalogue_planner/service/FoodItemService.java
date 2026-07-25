@@ -63,8 +63,10 @@ public class FoodItemService {
 
     // Only allow sorting by real FoodItem fields.
     private Sort buildSort(String sortBy, String direction) {
-        String safeSortBy = switch (sortBy) {
-            case "name", "category", "calories", "price" -> sortBy;
+        String requestedSort = sortBy == null ? "name" : sortBy;
+
+        String safeSortBy = switch (requestedSort) {
+            case "name", "category", "calories", "price" -> requestedSort;
             default -> "name";
         };
 
