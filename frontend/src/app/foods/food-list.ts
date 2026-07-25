@@ -51,6 +51,7 @@ export class FoodList implements OnInit {
         ).subscribe({
             next: (foods) => {
                 this.foods.set(foods)
+                this.currentPage = 1
                 this.loading.set(false)
             },
             error: () => {
@@ -71,59 +72,29 @@ export class FoodList implements OnInit {
         })
     }
 
-    // Call GET /api/foods
-    // loadFoods(): void {
-    //     this.loading.set(true)
-    //     this.error.set('')
+    pageSize = 6
+    currentPage = 1
 
-    //     this.foodService.getFoods(this.sortBy, this.direction).subscribe({
-    //         next: (foods) => {
-    //             this.foods.set(foods)
-    //             this.loading.set(false)
-    //         },
-    //         error: () => {
-    //             this.error.set('Failed to load foods')
-    //             this.loading.set(false)
-    //         }
-    //     })
-    // }
+    get totalPages(): number {
+        return Math.ceil(this.foods().length / this.pageSize)
+    }
 
-    // // Call GET /api/foods/search?name=xxx
-    // searchFoods(): void {
-    //     // call loadFoods() if trimmed searchText is empty
-    //     if (!this.searchText.trim()) {
-    //         this.loadFoods()
-    //         return
-    //     }
+    get paginatedFoods(): FoodItem[] {
+        const start = (this.currentPage - 1) * this.pageSize
+        return this.foods().slice(start, start + this.pageSize)
+    }
 
-    //     this.loading.set(true)
+    goToPage(page: number): void {
+        if (page < 1 || page > this.totalPages) {
+            return
+        }
 
+        this.currentPage = page
+    }
 
-    //     this.foodService.searchFoods(this.searchText).subscribe({
-    //         next: (foods) => {
-    //             this.foods.set(foods)
-    //             this.loading.set(false)
-    //         },
-    //         error: () => {
-    //             this.error.set('Search failed')
-    //             this.loading.set(false)
-    //         }
-    //     })
-    // }
+    changePageSize(size: string): void {
+        this.pageSize = Number(size)
+        this.currentPage = 1
+    }
 
-    // // Call /api/foods/filter?category=xxxx&maxCalories=yyy
-    // filterFoods(): void {
-    //     this.loading.set(true)
-
-    //     this.foodService.filterFoods(this.category, this.maxCalories).subscribe({
-    //         next: (foods) => {
-    //             this.foods.set(foods)
-    //             this.loading.set(false)
-    //         },
-    //         error: () => {
-    //             this.error.set('Filter failed')
-    //             this.loading.set(false)
-    //         }
-    //     })
-    // }
 }

@@ -51,11 +51,49 @@
 	<p class="my-4 font-medium">Total Foods: {{ foods().length }}</p>
 
 	<div class="food-grid">
-		@for (food of foods(); track food.id) {
+		@for (food of paginatedFoods; track food.id) {
 			<app-food-card
 				[food]="food"
 				(deleteFood)="deleteFood($event)"
 			/>
 		}
 	</div>
+
+	@if (foods().length > 0) {
+		<div class="pagination-panel">
+			<div class="join">
+			<button
+				type="button"
+				class="join-item btn btn-outline"
+				[disabled]="currentPage === 1"
+				(click)="goToPage(currentPage - 1)"
+			>
+				Previous
+			</button>
+
+			<button type="button" class="join-item btn btn-outline">
+				Page {{ currentPage }} of {{ totalPages }}
+			</button>
+
+			<button
+				type="button"
+				class="join-item btn btn-outline"
+				[disabled]="currentPage === totalPages"
+				(click)="goToPage(currentPage + 1)"
+			>
+				Next
+			</button>
+			</div>
+
+			<select
+			class="select select-bordered"
+			[value]="pageSize"
+			(change)="changePageSize($any($event.target).value)"
+			>
+			<option value="6">6 per page</option>
+			<option value="12">12 per page</option>
+			<option value="24">24 per page</option>
+			</select>
+		</div>
+	}
 }

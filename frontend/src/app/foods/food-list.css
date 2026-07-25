@@ -35,3 +35,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.pagination-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
