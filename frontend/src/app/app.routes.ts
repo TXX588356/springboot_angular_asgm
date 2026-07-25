@@ -31,5 +31,9 @@ export const routes: Routes = [
 				component: FoodNutrition
 			}
 		]
+	},
+	{
+		path: '*',
+		redirectTo: "/foods"
 	}
 ];

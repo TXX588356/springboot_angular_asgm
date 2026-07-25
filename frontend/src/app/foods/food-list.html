@@ -50,6 +50,16 @@
 } @else {
 	<p class="my-4 font-medium">Total Foods: {{ foods().length }}</p>
 
+	@if(foods().length === 0) {
+		<div class="empty-state">
+			<h2>No foods found</h2>
+			<p>Try changing your search, category, or calorie filter.</p>
+			<br>
+			<p>Or add a new food</p>
+			<a routerLink="/foods/new" class="btn btn-primary">Add Food</a>
+		</div>
+	}
+
 	<div class="food-grid">
 		@for (food of paginatedFoods; track food.id) {
 			<app-food-card
