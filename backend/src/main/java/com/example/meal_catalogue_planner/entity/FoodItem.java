@@ -71,7 +71,7 @@ public class FoodItem {
         this.price = price;
     }
 
-        // Getter returns the ID.
+    // Getter returns the ID.
     public Long getId() {
         return id;
     }

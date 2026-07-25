@@ -145,30 +145,8 @@ public class FoodItemService {
         return foodItemRepository.findByCategoryIgnoreCase(category);
     }
 
-    // Filter foods by cat and max calories.
+    // Filter foods by cat and max calories using JPQL query.
     public List<FoodItem> filterFoods(String category, Integer maxCalories) {
-        boolean hasCategory = category != null && !category.isBlank();
-        boolean hasMaxCalories = maxCalories != null;
-
-        // Case 1: category + maxCalories
-        if (hasCategory && hasMaxCalories) {
-            return foodItemRepository.findByCategoryIgnoreCaseAndCaloriesLessThanEqualOrderByNameAsc(
-                category, 
-                maxCalories
-            );
-        }
-
-        // Case 2: only category
-        if (hasCategory) {
-            return foodItemRepository.findByCategoryIgnoreCaseOrderByNameAsc(category);
-        }
-
-        // Case 3: only max calories
-        if (hasMaxCalories) {
-            return foodItemRepository.findByCaloriesLessThanEqualOrderByNameAsc(maxCalories);
-        }
-
-        // Case 4: no filter
-        return foodItemRepository.findAll();
+        return foodItemRepository.filterFoods(category, maxCalories);
     }
 }

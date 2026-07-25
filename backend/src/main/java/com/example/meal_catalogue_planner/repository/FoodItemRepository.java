@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.meal_catalogue_planner.entity.FoodItem;
@@ -21,24 +22,15 @@ public interface FoodItemRepository extends JpaRepository<FoodItem, Long>, JpaSp
     // Find foods where category matches, ignoring uppercase/lowercase
     List<FoodItem> findByCategoryIgnoreCase(String category);
 
-    // Find foods with calories less than or equal to maxCalories.
-    List<FoodItem> findByCaloriesLessThanEqualOrderByNameAsc(Integer maxCalories);
-
-    // Find foods by category and max calories
-    List<FoodItem> findByCategoryIgnoreCaseAndCaloriesLessThanEqualOrderByNameAsc(String category, Integer maxCalories);
-
-    // List foods by category and sort by name
-    List<FoodItem> findByCategoryIgnoreCaseOrderByNameAsc(String category);
-
-
-
     // JPQL custom query for optional filters.
     // Nothing to filter if category is NULL or maxCalories is NULL.
-    // @Query("""
-    //         SELECT f FROM FoodItem f
-    //         WHERE (:category IS NULL OR LOWER(f.category) = LOWER(:category))
-    //         AND (:maxCalories IS NULL OR f.calories <= :maxCalories)
-    //         ORDER BY f.name ASC
-    //         """)
-    // List<FoodItem> filterFoods(String category, Integer maxCalories);
+    @Query("""
+            SELECT f FROM FoodItem f
+            WHERE (:category IS NULL OR :category = '' OR LOWER(f.category) = LOWER(:category))
+            AND (:maxCalories IS NULL OR f.calories <= :maxCalories)
+            ORDER BY f.name ASC
+            """)
+    List<FoodItem> filterFoods(
+        @Param("category") String category, 
+        @Param("maxCalories")Integer maxCalories);
 }
