@@ -1,0 +1,26 @@
+.not-found-page {
+    min-height: 60vh;
+    display: grid;
+    place-items: center;
+}
+
+.not-found-panel {
+    text-align: center;
+    display: grid;
+    gap: 1rem;
+}
+
+.eyebrow {
+    color: var(--color-error);
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.not-found-panel h1 {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.not-found-panel p {
+    color: color-mix(in srgb, currentColor 70%, transparent);
+}

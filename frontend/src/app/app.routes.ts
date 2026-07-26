@@ -7,6 +7,7 @@ import { MealPlanList } from './meal-plans/meal-plan-list'
 import { MealPlanForm } from './meal-plans/meal-plan-form'
 import { MealPlanDetail } from './meal-plans/meal-plan-detail'
 import { Dashboard } from './dashboard/dashboard';
+import { NotFound } from './not-found/not-found';
 
 export const routes: Routes = [
 	{
@@ -58,6 +59,6 @@ export const routes: Routes = [
 	},
 	{
 		path: '**',
-		redirectTo: "/foods"
+		component: NotFound
 	}
 ];

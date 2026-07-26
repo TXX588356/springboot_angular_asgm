@@ -6,6 +6,16 @@
   <div class="navbar-end">
     <div class="nav-links">
       <a routerLink="/dashboard" class="btn btn-ghost">Dashboard</a>
+
+      @if (!isDashboardPage) {
+        @if (isFoodPage) {
+          <a routerLink="/meal-plans" class="btn btn-ghost">Meal Plans</a>
+        }
+
+        @if (isMealPlanPage) {
+          <a routerLink="/foods" class="btn btn-ghost">Food Catalogue</a>
+        }
+      }
     </div>
   </div>
 </nav>
