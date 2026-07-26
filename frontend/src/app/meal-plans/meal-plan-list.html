@@ -1,0 +1,71 @@
+<div class="page-heading">
+	<div>
+		<h1 class="text-3xl font-bold">Meal Plans</h1>
+		<p class="text-base-content/70">Plan foods by date, meal type, and quantity.</p>
+	</div>
+
+	<a routerLink="/meal-plans/new" class="btn btn-primary">Add Meal Plan</a>
+</div>
+
+<div class="filter-panel">
+	<input 
+		type="date"
+		[(ngModel)]="mealDate"
+		class="input input-bordered w-full"
+	/>
+
+	<select [(ngModel)]="mealType" class="select select-bordered w-full">
+		<option value="">All meal types</option>
+		<option value="BREAKFAST">Breakfast</option>
+		<option value="LUNCH">Lunch</option>
+		<option value="DINNER">Dinner</option>
+		<option value="SNACK">Snack</option>
+	</select>
+
+	<button type="button" class="btn btn-neutral" (click)="loadMealPlans()">Apply</button>
+	<button type="button" class="btn btn-ghost" (click)="clearFilters()">Clear</button>
+</div>
+
+@if (loading()) {
+	<p>Loading meal plans...</p>
+} @else if (error()) {
+	<p class="error">{{ error() }}</p>
+} @else {
+	<p class="my-4 font-medium">Total Meal Plans: {{ mealPlans().length }}</p>
+
+	@if (mealPlans().length === 0) {
+		<div class="empty-state">
+			<h2>No meal plans found</h2>
+			<p>Create your first meal plan or change the filters.</p>
+			
+			<a class="btn btn-primary" routerLink="/meal-plans/new">Add Meal Plan</a>
+		</div>
+	} @else {
+		<div class="meal-plan-grid">
+			@for (plan of mealPlans(); track plan.id) {
+				<div class="card bg-base-100 border border-base-300 shadow-300">
+					<div class="card-body">
+						<div class="card-title justify-between gap-3">
+							<h2>{{ plan.name }}</h2>
+							<span class="badge badge-outline">{{ plan.mealType }}</span>
+						</div>
+
+						<p>Date: {{ plan.mealDate }}</p>
+						<p>Items: {{ plan.items.length }}</p>
+						<p>Total Calories: {{ plan.totalCalories }}</p>
+
+						@if (plan.notes) {
+							<p>Notes: {{ plan.notes }}</p>
+						}
+
+						<div class="card-actions mt-2">
+							<a class="btn btn-sm btn-outline" routerLink="['/meal-plans', plan.id]">View</a>
+							<a class="btn btn-sm btn-info" routerLink="['/meal-plans', plan.id, 'edit']">Edit</a>
+							<button id="button" class="btn btn-sm btn-error" (click)="deleteMealPlan(plan.id)">Delete</button>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	}
+}

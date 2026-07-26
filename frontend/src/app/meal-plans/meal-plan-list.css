@@ -1,0 +1,39 @@
+.filter-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    align-items: center;
+}
+
+.meal-plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+
+.empty-state {
+    border: 1px solid hsl(var(--bc) / 0.15);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    background: hsl(var(--b1));
+    margin-top: 1rem;
+}
+
+.empty-state h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: hsl(var(--bc) / 0.7);
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .filter-panel {
+        grid-template-columns: 1fr;
+    }
+}

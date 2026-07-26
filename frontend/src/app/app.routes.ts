@@ -3,6 +3,9 @@ import { FoodList } from './foods/food-list';
 import { FoodForm } from './foods/food-form/food-form';
 import { FoodDetail } from './foods/food-detail/food-detail';
 import { FoodNutrition } from './foods/food-nutrition/food-nutrition';
+import { MealPlanList } from './meal-plans/meal-plan-list'
+// import { MealPlanForm } from './meal-plans/meal-plan-form/meal-plan-form'
+// import { MealPlanDetail } from './meal-plans/meal-plan-detail/meal-plan-detail'
 
 export const routes: Routes = [
 	{
@@ -32,6 +35,22 @@ export const routes: Routes = [
 			}
 		]
 	},
+	{
+		path: 'meal-plans',
+		component: MealPlanList,
+	},
+	// {
+	// 	path: 'meal-plans/new',
+	// 	component: MealPlanForm,
+	// },
+	// {
+	// 	path: 'meal-plans/:id/edit',
+	// 	component: MealPlanForm,
+	// },
+	// {
+	// 	path: 'meal-plans/:id',
+	// 	component: MealPlanDetail,
+	// },
 	{
 		path: '*',
 		redirectTo: "/foods"
