@@ -1,0 +1,43 @@
+<div class="dashboard-page">
+	<div class="page-heading">
+		<div>
+			<h1 class="text-3xl font-bold">Dashboard</h1>
+			<p class="text-base-content/70">Summary of catalogue foods and meal plans.</p>
+		</div>
+	</div>
+
+	@if (loading()) {
+		<p>Loading dashboard...</p>
+	} @else if(error()) {
+		<p class="error">{{ error() }}</p>
+	} @else {
+		<div class="summary-grid">
+			<div class="stat-card">
+					<span>Total Foods</span>
+					<strong>{{ totalFoods }}</strong>
+			</div>
+
+			<div class="stat-card">
+					<span>Categories</span>
+					<strong>{{ categoryCount }}</strong>
+			</div>
+
+			<div class="stat-card">
+					<span>Average Calories</span>
+					<strong>{{ averageCalories }} kcal</strong>
+			</div>
+
+			<div class="stat-card">
+					<span>Meal Plans</span>
+					<strong>{{ mealPlanCount }}</strong>
+			</div>
+		</div>
+
+		<div class="dashboard-actions">
+			<a routerLink="/foods" class="btn btn-primary btn-lg">View All Foods</a>
+			<a routerLink="/meal-plans" class="btn btn-secondary btn-lg">View All Meal Plans</a>
+		</div>
+
+	}
+
+</div>

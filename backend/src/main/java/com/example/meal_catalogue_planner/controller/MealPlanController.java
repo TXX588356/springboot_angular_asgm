@@ -39,6 +39,7 @@ public class MealPlanController {
         @RequestParam(required = false) LocalDate mealDate,
         @RequestParam(required = false) MealType mealType
     ) {
+        // Optional query parameters let the frontend filter the list without extra endpoints.
         return mealPlanService.getMealPlans(mealDate, mealType);
     }
 
@@ -52,6 +53,7 @@ public class MealPlanController {
     public MealPlanResponse createMealPlan(
         @Valid @RequestBody MealPlanRequest request
     ) {
+        // The request DTO contains food IDs and quantities; the service resolves them to entities.
         return mealPlanService.createMealPlan(request);
     }
 

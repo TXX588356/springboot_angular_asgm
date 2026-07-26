@@ -5,5 +5,6 @@ export interface MealPlanRequest {
     name: string,
     mealDate: string,
     mealType: MealType,
+    notes: string,
     items: MealPlanItemRequest[]
 }

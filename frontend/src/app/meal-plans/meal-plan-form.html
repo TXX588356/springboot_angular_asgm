@@ -1,0 +1,144 @@
+<div class="form-page">
+	<div class="page-heading">
+		<div>
+			<h1 class="text-3xl font-bold">
+				@if (isEditMode) {
+						Edit Meal Plan
+				} @else {
+						Add Meal Plan
+				}
+			</h1>
+
+			<p class="text-base-content/70">Choose foods, quantities, and meal details.</p>
+		</div>
+	</div>
+
+	@if (loading()) {
+		<p>Loading meal plan...</p>
+	} 
+
+	@if (error()) {
+		<p class="error">{{ error() }}</p>
+	}
+
+	<form [formGroup]="mealPlanForm" (ngSubmit)="saveMealPlan()" class="meal-plan-form card bg-base-100 border border-base-300 shadow-sm">
+		<div class="card-body">
+			<div class="form-grid">
+				<div class="form-field">
+					<label>Name</label>
+					<input type="text" formControlName="name" class="input input-bordered w-full" />
+					 
+					@if (mealPlanForm.get('name')?.touched && mealPlanForm.get('name')?.hasError('required')) {
+						<p class="error">Meal plan name is required</p>
+					}
+				</div>
+
+				<div class="form-field">
+					<label>Date</label>
+					<input type="date" formControlName="mealDate" class="input input-bordered w-full">
+
+					@if (mealPlanForm.get('mealDate')?.touched && mealPlanForm.get('mealDate')?.hasError('required')) {
+						<p class="error">Meal date is required</p>
+					}
+				</div>
+
+				<div class="form-field">
+					<label>Meal Type</label>
+					<select formControlName="mealType" class="select select-bordered w-full">
+							@for (type of mealTypes; track type) {
+									<option [value]="type">{{ type }}</option>
+							}
+					</select>
+					<p class="error" aria-hidden="true"></p>
+				</div>
+
+				<div class="form-field form-field-wide">
+						<label>Notes</label>
+						<textarea formControlName="notes" class="textarea textarea-bordered w-full"></textarea>
+				</div>
+			</div>
+
+			<div class="item-picker">
+				<div class="form-field">
+					<label>Food</label>
+					<select formControlName="foodItemId" class="select select-bordered w-full">
+						<option value="">Select food</option>
+						@for (food of foods(); track food.id) {
+							<option [value]="food.id">
+								{{ food.name }} - {{ food.calories }} kcal
+							</option>
+						}
+					</select>
+
+					@if(mealPlanForm.get('foodItemId')?.touched && mealPlanForm.get('foodItemId')?.hasError('required')) {
+						<p class="error">Food is required</p>
+					}
+				</div>
+
+				<div class="form-field">
+					<label>Quantity</label>
+					<input type="number" formControlName="quantity" min="0.01" step="0.01" class="input input-bordered w-full" />
+
+					@if (mealPlanForm.get('quantity')?.touched && mealPlanForm.get('quantity')?.hasError('min')) {
+						<p class="error">Quantity must be greater than zero</p>
+					}
+				</div>
+
+				<button type="button" class="btn btn-neutral" (click)="addSelectedFood()">Add Item</button>
+			</div>
+
+			<div class="selected-items">
+				<div class="selected-header">
+					<h2 class="card-title">Selected Foods</h2>
+					<strong>Total: {{ totalCalories }} kcal</strong>
+				</div>
+
+				@if (selectedItems().length === 0) {
+					<p class="empty-message">No foods selected yet.</p>
+				} @else {
+					<div class="overflow-x-auto">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Food</th>
+									<th>Calories</th>
+									<th>Quantity</th>
+									<th>Subtotal</th>
+									<th></th>
+								</tr>
+							</thead>
+
+							<tbody>
+								@for (item of selectedItems(); track item.foodItemId; let index = $index) {
+									<tr>
+										<td>{{ index + 1 }}</td>
+										<td>{{ item.foodName }}</td>
+										<td>{{ item.calories }} kcal</td>
+										<td>{{ item.quantity }}</td>
+										<td>{{ item.lineSubtotalCalories }} kcal</td>
+										<td>
+											<button
+												type="button"
+												class="btn btn-sm btn-error"
+												(click)="removeSelectedFood(item.foodItemId)"
+											>
+												Remove
+											</button>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div>
+
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary" [disabled]="loading()">Save</button>
+				<button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
+			</div>
+		</div>
+	
+	</form>
+</div>

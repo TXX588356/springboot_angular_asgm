@@ -1,0 +1,86 @@
+@if (loading()) {
+    <p>Loading meal plan...</p>
+} @else if(error()) {
+    <p class="error">{{ error() }}</p>
+}@else if(mealPlan()) {
+    <div class="detail-page">
+        <div class="page-heading">
+            <div>
+                <p class="text-base-content/70">Meal Plan Detail</p>
+                <h1 class="text-3xl font-bold">{{ mealPlan()!.name }}</h1>
+            </div>
+
+            <div class="actions">
+                <a routerLink="/meal-plans" class="btn btn-ghost">Back</a>
+                <a [routerLink]="['/meal-plans', mealPlan()!.id, 'edit']" class="btn btn-info">Edit</a>
+                <button type="button" class="btn btn-error" (click)="deleteMealPlan()">Delete</button>
+            </div>
+        </div>
+
+        
+        <div class="card bg-base-100 border border-base-300 shadow-sm">
+            <div class="card-body">
+                <div class="detail-grid">
+                    <div>
+                        <span class="label">Date</span>
+                        <strong>{{ mealPlan()!.mealDate }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="label">Meal Type</span>
+                        <strong>{{ mealPlan()!.mealType }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="label">Items</span>
+                        <strong>{{ mealPlan()!.items.length }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="label">Total Calories</span>
+                        <strong>{{ mealPlan()!.totalCalories }} kcal</strong>
+                    </div>
+                </div>
+
+                @if (mealPlan()!.notes) {
+                    <div class="notes-box">
+                        <span class="label">Notes</span>
+                        <p>{{ mealPlan()!.notes }}</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card bg-base-100 border border-base-300 shadow-sm mt-4">
+            <div class="card-body">
+                <h2 class="card-title">Food Items</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Food</th>
+                                <th>Calories</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (item of mealPlan()!.items; track item.id; let index = $index) {
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ item.foodName }}</td>
+                                    <td>{{ item.calories }} kcal</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.lineSubtotalCalories }} kcal</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}

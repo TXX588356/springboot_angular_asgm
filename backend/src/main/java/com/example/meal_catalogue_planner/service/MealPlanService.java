@@ -35,6 +35,7 @@ public class MealPlanService {
     public List<MealPlanResponse> getMealPlans(LocalDate mealDate, MealType mealType) {
         List<MealPlan> mealPlans;
 
+        // Pick the narrowest repository query based on the filters the user actually supplied.
         if (mealDate != null && mealType != null) {
             mealPlans = mealPlanRepository.findByMealDateAndMealType(mealDate, mealType);
         } else if (mealDate != null) {
@@ -63,6 +64,7 @@ public class MealPlanService {
         mealPlan.setMealType(request.mealType());
         mealPlan.setNotes(request.notes());
 
+        // Build child rows from food IDs instead of accepting nested JPA entities from the client.
         replaceItems(mealPlan, request.items());
 
         MealPlan savedMealPlan = mealPlanRepository.save(mealPlan);
@@ -77,6 +79,7 @@ public class MealPlanService {
         mealPlan.setMealType(request.mealType());
         mealPlan.setNotes(request.notes());
 
+        // Clearing the collection works with orphanRemoval so old item rows are deleted on save.
         mealPlan.getItems().clear();
         replaceItems(mealPlan, request.items());
 
@@ -110,6 +113,7 @@ public class MealPlanService {
         List<MealPlanItemRequest> itemRequests
     ) {
         for (MealPlanItemRequest itemRequest : itemRequests) {
+            // Validate each referenced food ID and attach the managed FoodItem entity.
             FoodItem foodItem = findFoodEntity(itemRequest.foodItemId());
 
             MealPlanItem item = new MealPlanItem();
@@ -122,11 +126,13 @@ public class MealPlanService {
     }
 
     private MealPlanResponse toResponse(MealPlan mealPlan) {
+        // Response DTOs avoid circular JSON from MealPlan -> items -> mealPlan.
         List<MealPlanItemResponse> itemResponses = mealPlan.getItems()
             .stream()
             .map(this::toItemResponse)
             .toList();
 
+        // Total calories is calculated from line subtotals instead of stored separately.
         BigDecimal totalCalories = itemResponses.stream()
             .map(MealPlanItemResponse::lineSubtotalCalories)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -143,6 +149,7 @@ public class MealPlanService {
     }
 
     private MealPlanItemResponse toItemResponse(MealPlanItem item) {
+        // Quantity can be decimal, so use BigDecimal for the subtotal calculation.
         BigDecimal lineSubtotalCalories = BigDecimal.valueOf(item.getFoodItem().getCalories())
             .multiply(item.getQuantity());
 

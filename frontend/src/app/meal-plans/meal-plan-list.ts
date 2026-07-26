@@ -12,6 +12,7 @@ import { MealPlanService } from "../services/meal-plan-service";
     styleUrl: 'meal-plan-list.css'
 })
 export class MealPlanList implements OnInit {
+    // Signals hold server state so the template updates when HTTP responses arrive.
     mealPlans = signal<MealPlanResponse[]>([])
     loading = signal<boolean>(false)
     error = signal<string>('')
@@ -30,9 +31,8 @@ export class MealPlanList implements OnInit {
         this.error.set('')
 
         this.mealPlanService.getMealPlans(this.mealDate, this.mealType).subscribe({
-            // get data from backend after successful HTTP requests.
             next: (response) => {
-                // Put backend response into the signal. (this.mealPlans)
+                // Store the backend response as the current list displayed by the template.
                 this.mealPlans.set(response)
                 this.loading.set(false)
             },

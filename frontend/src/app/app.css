@@ -2,3 +2,28 @@
   width: min(1120px, calc(100% - 32px));
   margin: 24px auto;
 }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .navbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .navbar-start,
+  .navbar-end {
+    width: 100%;
+  }
+
+  .nav-links {
+    justify-content: flex-start;
+  }
+}

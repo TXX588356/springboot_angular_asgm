@@ -52,16 +52,17 @@
 
 						<p>Date: {{ plan.mealDate }}</p>
 						<p>Items: {{ plan.items.length }}</p>
-						<p>Total Calories: {{ plan.totalCalories }}</p>
+						<p>Total Calories: {{ plan.totalCalories }} kcal</p>
 
 						@if (plan.notes) {
 							<p>Notes: {{ plan.notes }}</p>
 						}
 
 						<div class="card-actions mt-2">
-							<a class="btn btn-sm btn-outline" routerLink="['/meal-plans', plan.id]">View</a>
-							<a class="btn btn-sm btn-info" routerLink="['/meal-plans', plan.id, 'edit']">Edit</a>
-							<button id="button" class="btn btn-sm btn-error" (click)="deleteMealPlan(plan.id)">Delete</button>
+							<!-- include [] (property binding) for dynamic routes; without [] only for static routes. -->
+							<a class="btn btn-sm btn-outline" [routerLink]="['/meal-plans', plan.id]">View</a>
+							<a class="btn btn-sm btn-info" [routerLink]="['/meal-plans', plan.id, 'edit']">Edit</a>
+							<button type="button" class="btn btn-sm btn-error" (click)="deleteMealPlan(plan.id)">Delete</button>
 						</div>
 					</div>
 				</div>

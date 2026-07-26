@@ -21,7 +21,7 @@ export class MealPlanService {
         }
 
         if (mealType) {
-            params = params.set('mealDate', mealType)
+            params = params.set('mealType', mealType)
         }
 
         return this.http.get<MealPlanResponse[]>(this.apiUrl, { params })
@@ -35,7 +35,7 @@ export class MealPlanService {
         return this.http.post<MealPlanResponse>(this.apiUrl, request)
     }
 
-    updateMelaPlan(id: number, request: MealPlanRequest): Observable<MealPlanResponse> {
+    updateMealPlan(id: number, request: MealPlanRequest): Observable<MealPlanResponse> {
         return this.http.put<MealPlanResponse>(`${this.apiUrl}/${id}`, request)
     }
 
