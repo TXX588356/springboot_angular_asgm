@@ -142,7 +142,7 @@ public class FoodItemService {
 
     // Get foods by category
     public List<FoodItem> getFoodsByCategory(String category) {
-        return foodItemRepository.findByCategoryIgnoreCase(category);
+        return foodItemRepository.findCategoryOrCategoryCodeIgnoreCase(category);
     }
 
     // Filter foods by cat and max calories using JPQL query.

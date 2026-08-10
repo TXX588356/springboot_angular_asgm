@@ -1,12 +1,18 @@
 package com.example.meal_catalogue_planner.entity;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +36,15 @@ public class FoodItem {
     @NotBlank(message = "Category is required")
     @Column(nullable = false)
     private String category;
+
+    // Category codes
+    @ElementCollection
+    @CollectionTable(
+        name="food_item_category_codes",
+        joinColumns = @JoinColumn(name = "food_item_id")
+    )
+    @Column(name = "category_code", nullable = false)
+    private Set<String> categoryCodes = new LinkedHashSet<>();
 
     // Calories per serving
     @NotNull(message = "Calories is required")
@@ -58,11 +73,12 @@ public class FoodItem {
     public FoodItem() {
     }
 
-    public FoodItem(String name, String category, Integer calories,
+    public FoodItem(String name, String category, Collection<String> categoryCodes, Integer calories, 
                     BigDecimal protein, BigDecimal carbohydrates, BigDecimal fat,
                     String servingSize, BigDecimal price) {
         this.name = name;
         this.category = category;
+        this.categoryCodes = new LinkedHashSet<>(categoryCodes);
         this.calories = calories;
         this.protein = protein;
         this.carbohydrates = carbohydrates;

@@ -20,13 +20,23 @@ public interface FoodItemRepository extends JpaRepository<FoodItem, Long>, JpaSp
     List<FoodItem> findByNameContainingIgnoreCase(String name);
 
     // Find foods where category matches, ignoring uppercase/lowercase
-    List<FoodItem> findByCategoryIgnoreCase(String category);
+    @Query("""
+                SELECT DISTINCT f
+                FROM FoodItem f
+                LEFT JOIN f.categoryCodes code
+                WHERE LOWER(f.category) = LOWER(:category)
+                OR LOWER(code) = LOWER(:category)
+                """)
+    List<FoodItem> findCategoryOrCategoryCodeIgnoreCase(@Param("category") String category);
 
     // JPQL custom query for optional filters.
     // Nothing to filter if category is NULL or maxCalories is NULL.
     @Query("""
             SELECT f FROM FoodItem f
-            WHERE (:category IS NULL OR :category = '' OR LOWER(f.category) = LOWER(:category))
+            WHERE (:category IS NULL 
+            OR :category = '' 
+            OR LOWER(f.category) = LOWER(:category)) 
+            OR LOWER(f.categoryCodes) = LOWER(:category)
             AND (:maxCalories IS NULL OR f.calories <= :maxCalories)
             ORDER BY f.name ASC
             """)

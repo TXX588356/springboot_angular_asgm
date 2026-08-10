@@ -6,3 +6,8 @@ dev:
 
 dev-client:
 	cd frontend && ng serve
+
+
+DB_NAME=meal-planner
+DB_USER=postgres
+DB_HOST=localhost

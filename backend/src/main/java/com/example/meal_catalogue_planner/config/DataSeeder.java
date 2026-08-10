@@ -61,6 +61,7 @@ public class DataSeeder {
             return new FoodItem(
                     name,
                     category,
+                    categoryCodes,
                     calories,
                     protein,
                     carbohydrates,
