@@ -127,6 +127,40 @@ Base backend URL:
 http://localhost:8085
 ```
 
+### Authentication
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/api/auth/register` | Register a new user account with username, email, and password. |
+| `POST` | `/api/auth/login` | Login with email and password. Returns the authenticated user and a session token. |
+| `GET` | `/api/auth/me` | Get the currently authenticated user from the session token. |
+| `POST` | `/api/auth/logout` | Logout and invalidate the current session token. |
+
+Example registration request:
+
+```json
+{
+  "username": "student1",
+  "email": "student1@example.com",
+  "password": "password123"
+}
+```
+
+Example login request:
+
+```json
+{
+  "email": "student1@example.com",
+  "password": "password123"
+}
+```
+
+Protected API requests should include the session token returned by login:
+
+```text
+Authorization: Bearer <sessionToken>
+```
+
 ### Food Items
 
 | Method | Endpoint | Description |
@@ -198,4 +232,3 @@ backend/src/main/resources/data/food-items.json
 ```
 
 The backend includes a `DataSeeder` component that loads food data into the database during application startup.
-
