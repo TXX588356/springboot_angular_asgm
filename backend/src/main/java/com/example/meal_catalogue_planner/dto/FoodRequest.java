@@ -20,7 +20,7 @@ public record FoodRequest(
     List<String> categoryCodes,
 
     @NotNull(message = "Calories is required")
-    @Min(value = 1, message = "Calories must be greater than 0")
+    @Min(value = 0, message = "Calories must be zero or greater")
     Integer calories,
 
     @DecimalMin(value = "0.0", message = "Protein must be zero or greater")
