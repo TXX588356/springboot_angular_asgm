@@ -24,22 +24,22 @@ export class MealPlanService {
             params = params.set('mealType', mealType)
         }
 
-        return this.http.get<MealPlanResponse[]>(this.apiUrl, { params })
+        return this.http.get<MealPlanResponse[]>(this.apiUrl, { params, withCredentials: true })
     }
 
     getMealPlanById(id: number): Observable<MealPlanResponse> {
-        return this.http.get<MealPlanResponse>(`${this.apiUrl}/${id}`)
+        return this.http.get<MealPlanResponse>(`${this.apiUrl}/${id}`, { withCredentials: true })
     }
 
     createMealPlan(request: MealPlanRequest): Observable<MealPlanResponse> {
-        return this.http.post<MealPlanResponse>(this.apiUrl, request)
+        return this.http.post<MealPlanResponse>(this.apiUrl, request, { withCredentials: true })
     }
 
     updateMealPlan(id: number, request: MealPlanRequest): Observable<MealPlanResponse> {
-        return this.http.put<MealPlanResponse>(`${this.apiUrl}/${id}`, request)
+        return this.http.put<MealPlanResponse>(`${this.apiUrl}/${id}`, request, { withCredentials: true })
     }
 
     deleteMealPlan(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`)
+        return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true })
     }
 }

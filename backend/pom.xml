@@ -57,6 +57,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- Provides session authentication, password hashing, and route protection -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 		<!-- PostgreSQL database driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>

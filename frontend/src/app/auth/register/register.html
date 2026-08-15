@@ -1,0 +1,52 @@
+<section class="auth-page">
+  <div class="auth-panel">
+    <h1>Register</h1>
+    <p>Create an account to use the meal planner.</p>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="auth-form">
+      <label>
+        <span>Username</span>
+        <input type="text" formControlName="username" class="input input-bordered w-full" />
+      </label>
+      @if (registerForm.get('username')?.touched && registerForm.get('username')?.hasError('required')) {
+        <p class="field-error">Username is required.</p>
+      }
+      @if (registerForm.get('username')?.hasError('minlength')) {
+        <p class="field-error">Username must be at least 3 characters.</p>
+      }
+
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="email" class="input input-bordered w-full" />
+      </label>
+      @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+        <p class="field-error">Email is required.</p>
+      }
+      @if (registerForm.get('email')?.hasError('email')) {
+        <p class="field-error">Enter a valid email address.</p>
+      }
+
+      <label>
+        <span>Password</span>
+        <input type="password" formControlName="password" class="input input-bordered w-full" />
+      </label>
+      @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')) {
+        <p class="field-error">Password is required.</p>
+      }
+      @if (registerForm.get('password')?.hasError('minlength')) {
+        <p class="field-error">Password must be at least 6 characters.</p>
+      }
+
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || loading()">Register</button>
+    </form>
+
+    <p class="auth-footer">
+      <span>Already have an account?</span>
+      <a routerLink="/login" class="login-link">Login</a>
+    </p>
+  </div>
+</section>

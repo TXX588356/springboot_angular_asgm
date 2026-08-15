@@ -2,6 +2,7 @@ package com.example.meal_catalogue_planner.controller;
 
 import java.util.List;
 
+import com.example.meal_catalogue_planner.dto.FoodRequest;
 import com.example.meal_catalogue_planner.entity.FoodItem;
 
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,7 @@ public class FoodItemController {
         @RequestParam(required = false) String sortBy,
         @RequestParam(required = false) String direction
     ) {
+        // Spring Boot requirement 1: REST endpoint supports query parameters for search, filter, and sorting.
         return foodItemService.findFoods(name, category, maxCalories, sortBy, direction);
     }
 
@@ -55,26 +57,30 @@ public class FoodItemController {
     // GET /api/foods/{id}
     @GetMapping("/{id}")
     public FoodItem getFoodById(@PathVariable Long id) {
+        // Spring Boot requirement 1: path parameter maps the URL food ID to a backend lookup.
         return foodItemService.getFoodById(id);
     }
 
     // POST /api/foods
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FoodItem createFood(@Valid @RequestBody FoodItem foodItem) {
-        return foodItemService.createFood(foodItem);
+    public FoodItem createFood(@Valid @RequestBody FoodRequest request) {
+        // Spring Boot requirements 2 and 4: annotated handler creates a database row through Spring Data JPA.
+        return foodItemService.createFood(request);
     }
 
     // PUT /api/foods/{id}
     @PutMapping("/{id}")
-    public FoodItem updateFood(@PathVariable Long id,@Valid @RequestBody FoodItem foodItem) {
-       return foodItemService.updateFood(id, foodItem);
+    public FoodItem updateFood(@PathVariable Long id,@Valid @RequestBody FoodRequest request) {
+       // Spring Boot requirements 2 and 4: annotated handler updates an existing database row.
+       return foodItemService.updateFood(id, request);
     }
 
     // DELETE /api/foods/{id}
     // delete one food item
     @DeleteMapping("/{id}")
     public void deleteFood(@PathVariable Long id) {
+        // Spring Boot requirements 2 and 4: annotated handler deletes a database row by ID.
         foodItemService.deleteFood(id);
     }
 

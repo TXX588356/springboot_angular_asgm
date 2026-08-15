@@ -10,6 +10,7 @@ import com.example.meal_catalogue_planner.service.MealPlanService;
 
 import jakarta.validation.Valid;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,35 +37,37 @@ public class MealPlanController {
 
     @GetMapping
     public List<MealPlanResponse> getMealPlans(
+        Principal principal,
         @RequestParam(required = false) LocalDate mealDate,
         @RequestParam(required = false) MealType mealType
     ) {
-        // Optional query parameters let the frontend filter the list without extra endpoints.
-        return mealPlanService.getMealPlans(mealDate, mealType);
+        // Spring Boot requirement 1: optional query parameters filter meal plans without extra endpoints.
+        return mealPlanService.getMealPlans(principal.getName(), mealDate, mealType);
     }
 
     @GetMapping("/{id}")
-    public MealPlanResponse getMealPlanById(@PathVariable Long id) {
-        return mealPlanService.getMealPlanById(id);
+    public MealPlanResponse getMealPlanById(Principal principal, @PathVariable Long id) {
+        return mealPlanService.getMealPlanById(principal.getName(), id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MealPlanResponse createMealPlan(
+        Principal principal,
         @Valid @RequestBody MealPlanRequest request
     ) {
-        // The request DTO contains food IDs and quantities; the service resolves them to entities.
-        return mealPlanService.createMealPlan(request);
+        // Spring Boot requirements 2 and 4: POST handler creates meal-plan rows and child item rows.
+        return mealPlanService.createMealPlan(principal.getName(), request);
     }
 
     @PutMapping("/{id}")
-    public MealPlanResponse updateMealPlan(@PathVariable Long id, @Valid @RequestBody MealPlanRequest request) {
-        return mealPlanService.updateMealPlan(id, request);
+    public MealPlanResponse updateMealPlan(Principal principal, @PathVariable Long id, @Valid @RequestBody MealPlanRequest request) {
+        return mealPlanService.updateMealPlan(principal.getName(), id, request);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMealPlan(@PathVariable Long id) {
-        mealPlanService.deleteMealPlan(id);
+    public void deleteMealPlan(Principal principal, @PathVariable Long id) {
+        mealPlanService.deleteMealPlan(principal.getName(), id);
     }
     
     

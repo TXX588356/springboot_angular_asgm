@@ -1,0 +1,38 @@
+<section class="auth-page">
+  <div class="auth-panel">
+    <h1>Login</h1>
+    <p>Access your meal catalogue and meal plans.</p>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="auth-form">
+      <label>
+        <span>Email</span>
+        <input type="email" formControlName="email" class="input input-bordered w-full" />
+      </label>
+      @if (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) {
+        <p class="field-error">Email is required.</p>
+      }
+      @if (loginForm.get('email')?.hasError('email')) {
+        <p class="field-error">Enter a valid email address.</p>
+      }
+
+      <label>
+        <span>Password</span>
+        <input type="password" formControlName="password" class="input input-bordered w-full" />
+      </label>
+      @if (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) {
+        <p class="field-error">Password is required.</p>
+      }
+
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || loading()">Login</button>
+    </form>
+
+    <p class="auth-footer">
+      <span>No account yet?</span>
+      <a routerLink="/register" class="register-link">Register</a>
+    </p>
+  </div>
+</section>

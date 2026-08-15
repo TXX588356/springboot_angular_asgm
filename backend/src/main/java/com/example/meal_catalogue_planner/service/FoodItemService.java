@@ -1,7 +1,10 @@
 package com.example.meal_catalogue_planner.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.meal_catalogue_planner.dto.FoodRequest;
 import com.example.meal_catalogue_planner.entity.FoodItem;
 import com.example.meal_catalogue_planner.repository.FoodItemRepository;
 
@@ -100,25 +104,54 @@ public class FoodItemService {
     }
 
     // Create new food item
-    public FoodItem createFood(FoodItem foodItem) {
+    public FoodItem createFood(FoodRequest request) {
+        FoodItem foodItem = new FoodItem();
         foodItem.setId(null);
+        applyFoodRequest(foodItem, request);
         return foodItemRepository.save(foodItem);
     }
 
     // Update existing food item
-    public FoodItem updateFood(Long id, FoodItem updatedFood) {
+    public FoodItem updateFood(Long id, FoodRequest request) {
         FoodItem existingFood = getFoodById(id);
 
-        existingFood.setName(updatedFood.getName());
-        existingFood.setCategory(updatedFood.getCategory());
-        existingFood.setCalories(updatedFood.getCalories());
-        existingFood.setProtein(updatedFood.getProtein());
-        existingFood.setCarbohydrates(updatedFood.getCarbohydrates());
-        existingFood.setFat(updatedFood.getFat());
-        existingFood.setServingSize(updatedFood.getServingSize());
-        existingFood.setPrice(updatedFood.getPrice());
+        applyFoodRequest(existingFood, request);
 
         return foodItemRepository.save(existingFood);
+    }
+
+    private void applyFoodRequest(FoodItem foodItem, FoodRequest request) {
+        // Request DTO keeps JSON input separate from the JPA entity and avoids deserialization issues.
+        foodItem.setName(request.name());
+        foodItem.setCategory(request.category());
+        foodItem.setCategoryCodes(resolveCategoryCodes(request));
+        foodItem.setCalories(request.calories());
+        foodItem.setProtein(defaultDecimal(request.protein()));
+        foodItem.setCarbohydrates(defaultDecimal(request.carbohydrates()));
+        foodItem.setFat(defaultDecimal(request.fat()));
+        foodItem.setServingSize(request.servingSize());
+        foodItem.setPrice(defaultDecimal(request.price()));
+    }
+
+    private Set<String> resolveCategoryCodes(FoodRequest request) {
+        Set<String> categoryCodes = new LinkedHashSet<>();
+
+        if (request.categoryCodes() != null) {
+            request.categoryCodes().stream()
+                .filter(code -> code != null && !code.isBlank())
+                .map(String::trim)
+                .forEach(categoryCodes::add);
+        }
+
+        if (categoryCodes.isEmpty() && request.category() != null && !request.category().isBlank()) {
+            categoryCodes.add(request.category().trim());
+        }
+
+        return categoryCodes;
+    }
+
+    private BigDecimal defaultDecimal(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     // Delete food. If it is used by a meal plan later, return 409

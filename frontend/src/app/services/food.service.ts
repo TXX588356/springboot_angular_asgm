@@ -37,29 +37,32 @@ export class FoodService {
             params = params.set('maxCalories', maxCalories)
         }
 
-        return this.http.get<FoodItem[]>(this.apiUrl, { params })
+        // Angular requirement 10: HttpClient returns an Observable for async GET requests with query params.
+        return this.http.get<FoodItem[]>(this.apiUrl, { params, withCredentials: true })
     }
 
     // Get one food by ID
     getFoodById(id: number): Observable<FoodItem> {
-        return this.http.get<FoodItem>(`${this.apiUrl}/${id}`)
+        return this.http.get<FoodItem>(`${this.apiUrl}/${id}`, { withCredentials: true })
     }
 
     // Create one food
     createFood(food: FoodRequest): Observable<FoodItem> {
-        return this.http.post<FoodItem>(this.apiUrl, food)
+        // Angular requirement 10: POST creates a backend food record asynchronously.
+        return this.http.post<FoodItem>(this.apiUrl, food, { withCredentials: true })
     }
 
     // Update food
     updateFood(id: number, food: FoodRequest): Observable<FoodItem> {
-        return this.http.put<FoodItem>(`${this.apiUrl}/${id}`, food)
+        // Angular requirement 10: PUT updates a backend food record asynchronously.
+        return this.http.put<FoodItem>(`${this.apiUrl}/${id}`, food, { withCredentials: true })
     }
 
     // Search foods by name.
     searchFoods(name: string): Observable<FoodItem[]> {
         const params = new HttpParams().set('name', name)
 
-        return this.http.get<FoodItem[]>(`${this.apiUrl}/search`, { params })
+        return this.http.get<FoodItem[]>(`${this.apiUrl}/search`, { params, withCredentials: true })
     }
 
     // Filter foods by cat and max calories.
@@ -73,11 +76,12 @@ export class FoodService {
             params = params.set('maxCalories', maxCalories)
         }
 
-        return this.http.get<FoodItem[]>(`${this.apiUrl}/filter`, { params })
+        return this.http.get<FoodItem[]>(`${this.apiUrl}/filter`, { params, withCredentials: true })
     }
 
     // Delete a food by ID
     deleteFood(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`)
+        // Angular requirement 10: DELETE removes a backend food record asynchronously.
+        return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true })
     }
 }

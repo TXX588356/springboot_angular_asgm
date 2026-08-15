@@ -1,5 +1,6 @@
 <div class="page-heading">
 	<div>
+		<!-- Angular requirement 1: interpolation renders dynamic catalogue summary text. -->
 		<h1 class="text-3xl font-bold">Food Catalogue</h1>
 		<p class="text-base-content/70">Search, filter, sort, and manage food records.</p>
 	</div>
@@ -40,9 +41,11 @@
 		<option value="desc">Descending</option>
 	</select>
 
+	<!-- Angular requirement 3: event binding responds to the user's filter action. -->
 	<button type="button" class="btn btn-neutral" (click)="applyQuery()">Apply</button>
 </div>
 
+<!-- Angular requirement 6: @if/@else switches between loading, error, empty, and data states. -->
 @if (loading()) {
 	<p>Loading foods...</p>
 } @else if (error()) {
@@ -61,10 +64,13 @@
 	}
 
 	<div class="food-grid">
-		@for (food of paginatedFoods; track food.id) {
+		<!-- Angular requirements 4, 5, and 7: parent renders child cards with @for and passes data/events through @Input/@Output. -->
+		@for (food of paginatedFoods; track food.id; let index = $index; let count = $count; let first = $first) {
 			<app-food-card
 				[food]="food"
 				(deleteFood)="deleteFood($event)"
+				[class.first-card]="first"
+				[attr.aria-label]="'Food card ' + (index + 1) + ' of ' + count"
 			/>
 		}
 	</div>

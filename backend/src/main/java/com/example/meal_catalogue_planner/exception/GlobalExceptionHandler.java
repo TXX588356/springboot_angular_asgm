@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +26,7 @@ public class GlobalExceptionHandler {
         MethodArgumentNotValidException ex,
         HttpServletRequest request
     ) {
+        // Spring Boot requirement 6: validation errors return a custom 400 response with field messages.
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
@@ -47,6 +50,7 @@ public class GlobalExceptionHandler {
         Exception ex,
         HttpServletRequest request
     ) {
+        // Spring Boot requirement 6: malformed JSON and invalid parameter types return a custom 400 response.
         return buildResponse(
             HttpStatus.BAD_REQUEST,
             "Bad Request",
@@ -73,11 +77,41 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiErrorResponse> handleAuthentication(
+        AuthenticationException ex,
+        HttpServletRequest request
+    ) {
+        // Authentication requirement: unauthenticated requests return a clear custom 401 response.
+        return buildResponse(
+            HttpStatus.UNAUTHORIZED,
+            "Unauthorized",
+            "Authentication is required",
+            request.getRequestURI(),
+            null
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+        AccessDeniedException ex,
+        HttpServletRequest request
+    ) {
+        return buildResponse(
+            HttpStatus.FORBIDDEN,
+            "Forbidden",
+            "You do not have permission to access this resource",
+            request.getRequestURI(),
+            null
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(
         Exception ex,
         HttpServletRequest request
     ) {
+        // Spring Boot requirement 6: unexpected server failures return a consistent custom 500 response.
         return buildResponse(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Internal Server Error",

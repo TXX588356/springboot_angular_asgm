@@ -5,16 +5,24 @@
 
   <div class="navbar-end">
     <div class="nav-links">
-      <a routerLink="/dashboard" class="btn btn-ghost">Dashboard</a>
+      @if (authService.currentUser()) {
+        <a routerLink="/dashboard" class="btn btn-ghost">Dashboard</a>
 
-      @if (!isDashboardPage) {
-        @if (isFoodPage) {
-          <a routerLink="/meal-plans" class="btn btn-ghost">Meal Plans</a>
+        @if (!isDashboardPage) {
+          @if (isFoodPage) {
+            <a routerLink="/meal-plans" class="btn btn-ghost">Meal Plans</a>
+          }
+
+          @if (isMealPlanPage) {
+            <a routerLink="/foods" class="btn btn-ghost">Food Catalogue</a>
+          }
         }
 
-        @if (isMealPlanPage) {
-          <a routerLink="/foods" class="btn btn-ghost">Food Catalogue</a>
-        }
+        <span class="user-label">{{ authService.currentUser()!.username }}</span>
+        <button type="button" class="btn btn-outline" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login" class="btn btn-ghost">Login</a>
+        <a routerLink="/register" class="btn btn-primary">Register</a>
       }
     </div>
   </div>

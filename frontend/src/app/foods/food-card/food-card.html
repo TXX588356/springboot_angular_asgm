@@ -2,6 +2,7 @@
     <div class="card-body">
         <div class="card-title justify-between gap-3">
             <h2>{{ food.name }}</h2>
+            <!-- Angular requirements 1 and 5: property binding passes dynamic calories to a grand-child component. -->
             <app-nutrition-badge [calories]="food.calories"></app-nutrition-badge>
         </div>
 
@@ -13,6 +14,7 @@
         <p>Price: RM {{ food.price }}</p>
 
         <div class="card-actions food-actions mt-2">
+            <!-- Angular requirements 11 and 12: dynamic routerLink arrays pass route parameters to detail/edit routes. -->
             <a [routerLink]="['/foods', food.id]" class="btn btn-sm btn-outline">View</a>
             <a [routerLink]="['/foods', food.id, 'edit']" class="btn btn-sm btn-info">Edit</a>
             <button class="btn btn-sm btn-error" type="button" (click)="onDelete()">Delete</button>

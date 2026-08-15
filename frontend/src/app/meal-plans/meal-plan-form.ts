@@ -168,11 +168,17 @@ export class MealPlanForm implements OnInit {
             ])
         }
 
-        // Reset only the item picker controls after adding one row.
-        this.mealPlanForm.patchValue({
-            foodItemId: '',
-            quantity: 1,
-        })
+        // Reset only the temporary item picker controls and clear their validation state after a successful add.
+        const foodItemControl = this.mealPlanForm.get('foodItemId')
+        const quantityControl = this.mealPlanForm.get('quantity')
+
+        foodItemControl?.setValue('')
+        foodItemControl?.markAsUntouched()
+        foodItemControl?.markAsPristine()
+
+        quantityControl?.setValue(1)
+        quantityControl?.markAsUntouched()
+        quantityControl?.markAsPristine()
     }
 
     removeSelectedFood(foodItemId: number): void {

@@ -11,6 +11,11 @@
   justify-content: flex-end;
 }
 
+.user-label {
+  font-weight: 600;
+  color: color-mix(in srgb, currentColor 72%, transparent);
+}
+
 @media (max-width: 720px) {
   .navbar {
     align-items: flex-start;

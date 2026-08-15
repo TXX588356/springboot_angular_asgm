@@ -20,6 +20,7 @@
     <p class="error">{{ error() }}</p>
   }
 
+  <!-- Angular requirements 8 and 9: grouped reactive form captures food data and displays validation errors. -->
   <form [formGroup]="foodForm" (ngSubmit)="saveFood()" class="food-form card bg-base-100 border border-base-300 shadow-sm">
     <div class="card-body">
       <div class="form-grid">

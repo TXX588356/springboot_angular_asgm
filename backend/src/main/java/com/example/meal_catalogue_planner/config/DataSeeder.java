@@ -17,7 +17,7 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 public class DataSeeder {
 
-    // Load starter food records from JSON when Spring Boot starts.
+    // Spring Boot requirement 3: initialize the database with starter domain records from JSON.
     @Bean
     public CommandLineRunner seedFoodItems(
             FoodItemRepository foodItemRepository,

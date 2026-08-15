@@ -10,9 +10,18 @@ import java.time.LocalDate;
 
 
 public interface MealPlanRepository extends JpaRepository<MealPlan, Long>{
-    List<MealPlan> findByMealDate(LocalDate mealDate);
+    // Spring Boot requirement 5: derived queries support meal-plan filtering by date and type.
+    List<MealPlan> findByUserAccountEmailIgnoreCase(String email);
 
-    List<MealPlan> findByMealType(MealType mealType);
+    List<MealPlan> findByUserAccountEmailIgnoreCaseAndMealDate(String email, LocalDate mealDate);
 
-    List<MealPlan> findByMealDateAndMealType(LocalDate mealDate, MealType mealType);
+    List<MealPlan> findByUserAccountEmailIgnoreCaseAndMealType(String email, MealType mealType);
+
+    List<MealPlan> findByUserAccountEmailIgnoreCaseAndMealDateAndMealType(
+        String email,
+        LocalDate mealDate,
+        MealType mealType
+    );
+
+    java.util.Optional<MealPlan> findByIdAndUserAccountEmailIgnoreCase(Long id, String email);
 }

@@ -4,7 +4,7 @@ import { FoodItem } from "../models/food-item";
 import { FormsModule } from "@angular/forms";
 import { FoodService } from "../services/food.service";
 import { FoodCard } from "./food-card/food-card";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 
 @Component({
     selector: 'app-food-list',
@@ -26,6 +26,8 @@ export class FoodList implements OnInit {
 
     constructor(
         private foodService: FoodService,
+        private route: ActivatedRoute,
+        private router: Router,
         @Inject(PLATFORM_ID) private platformId: object,
     ) {}
 
@@ -35,10 +37,35 @@ export class FoodList implements OnInit {
             return
         }
 
-        this.applyQuery()
+        // Angular requirement 12: restore search/filter/sort state from routed query parameters.
+        const params = this.route.snapshot.queryParamMap
+        this.searchText = params.get('name') ?? ''
+        this.category = params.get('category') ?? ''
+        this.sortBy = params.get('sortBy') ?? 'name'
+        this.direction = params.get('direction') ?? 'asc'
+
+        const maxCaloriesParam = params.get('maxCalories')
+        this.maxCalories = maxCaloriesParam ? Number(maxCaloriesParam) : undefined
+
+        this.applyQuery(false)
     }
 
-    applyQuery(): void {
+    applyQuery(updateRoute = true): void {
+        if (updateRoute) {
+            // Angular requirement 12: pass filters as query parameters between routed views.
+            this.router.navigate([], {
+                relativeTo: this.route,
+                queryParams: {
+                    name: this.searchText || null,
+                    category: this.category || null,
+                    maxCalories: this.maxCalories ?? null,
+                    sortBy: this.sortBy,
+                    direction: this.direction,
+                },
+                queryParamsHandling: 'merge',
+            })
+        }
+
         this.loading.set(true)
         this.error.set('')
 

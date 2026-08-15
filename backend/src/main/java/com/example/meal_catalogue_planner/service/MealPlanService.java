@@ -16,34 +16,39 @@ import com.example.meal_catalogue_planner.entity.FoodItem;
 import com.example.meal_catalogue_planner.entity.MealPlan;
 import com.example.meal_catalogue_planner.entity.MealPlanItem;
 import com.example.meal_catalogue_planner.entity.MealType;
+import com.example.meal_catalogue_planner.entity.UserAccount;
 import com.example.meal_catalogue_planner.repository.FoodItemRepository;
 import com.example.meal_catalogue_planner.repository.MealPlanRepository;
+import com.example.meal_catalogue_planner.repository.UserAccountRepository;
 
 @Service
 public class MealPlanService {
     private final MealPlanRepository mealPlanRepository;
     private final FoodItemRepository foodItemRepository;
+    private final UserAccountRepository userAccountRepository;
 
     public MealPlanService(
         MealPlanRepository mealPlanRepository,
-        FoodItemRepository foodItemRepository
+        FoodItemRepository foodItemRepository,
+        UserAccountRepository userAccountRepository
     ) {
         this.mealPlanRepository = mealPlanRepository;
         this.foodItemRepository = foodItemRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
-    public List<MealPlanResponse> getMealPlans(LocalDate mealDate, MealType mealType) {
+    public List<MealPlanResponse> getMealPlans(String userEmail, LocalDate mealDate, MealType mealType) {
         List<MealPlan> mealPlans;
 
-        // Pick the narrowest repository query based on the filters the user actually supplied.
+        // Always include userEmail so one user cannot read another user's meal plans.
         if (mealDate != null && mealType != null) {
-            mealPlans = mealPlanRepository.findByMealDateAndMealType(mealDate, mealType);
+            mealPlans = mealPlanRepository.findByUserAccountEmailIgnoreCaseAndMealDateAndMealType(userEmail, mealDate, mealType);
         } else if (mealDate != null) {
-            mealPlans = mealPlanRepository.findByMealDate(mealDate);
+            mealPlans = mealPlanRepository.findByUserAccountEmailIgnoreCaseAndMealDate(userEmail, mealDate);
         } else if (mealType != null) {
-            mealPlans = mealPlanRepository.findByMealType(mealType);
+            mealPlans = mealPlanRepository.findByUserAccountEmailIgnoreCaseAndMealType(userEmail, mealType);
         } else {
-            mealPlans = mealPlanRepository.findAll();
+            mealPlans = mealPlanRepository.findByUserAccountEmailIgnoreCase(userEmail);
         }
 
         return mealPlans.stream()
@@ -51,13 +56,14 @@ public class MealPlanService {
             .toList();
     }
 
-    public MealPlanResponse getMealPlanById(Long id) {
-        MealPlan mealPlan = findMealPlanEntity(id);
+    public MealPlanResponse getMealPlanById(String userEmail, Long id) {
+        MealPlan mealPlan = findMealPlanEntity(userEmail, id);
         return toResponse(mealPlan);
     }
 
-    public MealPlanResponse createMealPlan(MealPlanRequest request) {
+    public MealPlanResponse createMealPlan(String userEmail, MealPlanRequest request) {
         MealPlan mealPlan = new MealPlan();
+        mealPlan.setUserAccount(findUserAccount(userEmail));
 
         mealPlan.setName(request.name());
         mealPlan.setMealDate(request.mealDate());
@@ -71,8 +77,8 @@ public class MealPlanService {
         return toResponse(savedMealPlan);
     }
 
-    public MealPlanResponse updateMealPlan(Long id, MealPlanRequest request) {
-        MealPlan mealPlan = findMealPlanEntity(id);
+    public MealPlanResponse updateMealPlan(String userEmail, Long id, MealPlanRequest request) {
+        MealPlan mealPlan = findMealPlanEntity(userEmail, id);
 
         mealPlan.setName(request.name());
         mealPlan.setMealDate(request.mealDate());
@@ -87,17 +93,25 @@ public class MealPlanService {
         return toResponse(savedMealPlan);
     }
 
-    public void deleteMealPlan(Long id) {
-        MealPlan mealPlan = findMealPlanEntity(id);
+    public void deleteMealPlan(String userEmail, Long id) {
+        MealPlan mealPlan = findMealPlanEntity(userEmail, id);
         mealPlanRepository.delete(mealPlan);
     }
 
-    private MealPlan findMealPlanEntity(Long id) {
-        return mealPlanRepository.findById(id)
+    private MealPlan findMealPlanEntity(String userEmail, Long id) {
+        return mealPlanRepository.findByIdAndUserAccountEmailIgnoreCase(id, userEmail)
         .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "Meal plan not found with id: " + id
         ));
+    }
+
+    private UserAccount findUserAccount(String userEmail) {
+        return userAccountRepository.findByEmailIgnoreCase(userEmail)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Authenticated user was not found"
+            ));
     }
 
     private FoodItem findFoodEntity(Long id) {

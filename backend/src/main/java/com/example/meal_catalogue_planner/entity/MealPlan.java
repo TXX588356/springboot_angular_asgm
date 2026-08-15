@@ -11,15 +11,22 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class MealPlan {
+    // Spring Boot requirement 3: MealPlan models scheduled meals and owns its selected food rows.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
     
     @NotBlank(message = "Meal plan name is required")
     private String name;
@@ -44,6 +51,10 @@ public class MealPlan {
         return name;
     }
 
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
     public LocalDate getMealDate() {
         return mealDate;
     }
@@ -66,6 +77,10 @@ public class MealPlan {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 
     public void setMealDate(LocalDate mealDate) {

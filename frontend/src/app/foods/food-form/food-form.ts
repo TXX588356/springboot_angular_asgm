@@ -25,20 +25,21 @@ export class FoodForm implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
     ) {
-			  this.foodForm = this.fb.group({
-        name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
-        category: ['', [Validators.required]],
-        servingSize: ['', Validators.required],
-        calories: [0, [Validators.required, Validators.min(0)]],
-        price: [0, [Validators.required, Validators.min(0)]],
+        // Angular requirements 8 and 9: reactive form controls include validators for user input.
+        this.foodForm = this.fb.group({
+            name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
+            category: ['', [Validators.required]],
+            servingSize: ['', Validators.required],
+            calories: [0, [Validators.required, Validators.min(0)]],
+            price: [0, [Validators.required, Validators.min(0)]],
 
-        nutrition: this.fb.group({
-            protein: [0, [Validators.min(0)]],
-            carbohydrates: [0, [Validators.min(0)]],
-            fat: [0, [Validators.min(0)]],
+            nutrition: this.fb.group({
+                protein: [0, [Validators.min(0)]],
+                carbohydrates: [0, [Validators.min(0)]],
+                fat: [0, [Validators.min(0)]],
+            })
         })
-    })
-		}
+    }
 
 
 
@@ -47,6 +48,7 @@ export class FoodForm implements OnInit {
         const idParam = this.route.snapshot.paramMap.get('id')
 
         if (idParam) {
+            // Angular requirement 12: route parameter decides which food record is edited.
             this.foodId = Number(idParam)
             this.isEditMode = true
             this.loadFood(this.foodId)
@@ -113,6 +115,7 @@ export class FoodForm implements OnInit {
 			if (this.isEditMode && this.foodId != null) {
 				this.foodService.updateFood(this.foodId, request).subscribe({
 					next: () => {
+						// Angular requirement 14: programmatic navigation returns to the catalogue after saving.
 						this.router.navigate(['/foods'])
 					},
 					error: () => {

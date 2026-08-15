@@ -3,6 +3,7 @@ package com.example.meal_catalogue_planner.entity;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CollectionTable;
@@ -21,6 +22,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 public class FoodItem {
+    // Spring Boot requirement 3: FoodItem is a JPA domain class mapped to the food catalogue table.
     // Primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,6 +117,14 @@ public class FoodItem {
     // Setter changes the category.
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Set<String> getCategoryCodes() {
+        return categoryCodes;
+    }
+
+    public void setCategoryCodes(Collection<String> categoryCodes) {
+        this.categoryCodes = new LinkedHashSet<>(categoryCodes == null ? List.of() : categoryCodes);
     }
 
     // Getter returns calories.
