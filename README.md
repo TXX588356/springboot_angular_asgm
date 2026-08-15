@@ -1,6 +1,27 @@
 # Meal Catalogue Planner
 
-Meal Catalogue Planner is a Spring Boot and Angular application for managing food items and building meal plans from them. The backend exposes REST APIs for food catalogue CRUD, filtering, searching, and meal plan management. The frontend consumes those APIs through an Angular development proxy.
+Meal Catalogue Planner is a full-stack Spring Boot and Angular application for managing a personal food catalogue and planning meals from saved food items. It is built as a practical CRUD-based meal planning system where users can register, log in, maintain food records, and create meal plans with calculated calorie totals.
+
+The project demonstrates how an Angular frontend communicates with a Spring Boot REST API backed by PostgreSQL. It includes form validation, route navigation, authenticated API access, database persistence, derived queries, JPQL queries, and custom API error responses.
+
+Each logged-in user has their own meal plans. Food catalogue records are shared as reusable food options, while meal plans are scoped to the authenticated user so one user cannot view, update, or delete another user's plans.
+
+## Features
+
+- User registration with username, email, and password.
+- Email and password login.
+- Server-side token sessions for authenticated requests.
+- Logout with session invalidation.
+- Food catalogue CRUD: create, view, update, and delete food items.
+- Food search, category filtering, calorie filtering, and sorting.
+- Meal plan CRUD: create, view, update, and delete meal plans.
+- User-owned meal plans so each account sees only its own plans.
+- Meal plan item selection from existing food records.
+- Automatic meal-plan calorie total calculation.
+- Angular reactive forms with validation messages.
+- Angular route guards for protected pages.
+- Spring Boot validation and custom error responses.
+- PostgreSQL persistence through Spring Data JPA and Hibernate.
 
 ## Tech Stack
 
