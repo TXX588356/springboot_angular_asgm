@@ -12,21 +12,26 @@ import { MealPlanService } from "../services/meal-plan-service";
 export class MealPlanDetail implements OnInit {
     // Null means the detail request has not returned a usable meal plan yet.
     mealPlan = signal<MealPlanResponse | null> (null)
+    // Indicates whether the detail view is loading.
     loading = signal<boolean>(false)
+    // Stores the detail-view error message.
     error = signal<string>('')
 
+    // Injects route access, navigation, and meal-plan API dependencies.
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private mealPlanService: MealPlanService
     ) {}
 
+    // Loads the route-selected meal plan when the detail page opens.
     ngOnInit(): void {
         // Detail pages are route-driven, so the meal plan ID comes from /meal-plans/:id.
         const id = Number(this.route.snapshot.paramMap.get('id'))
         this.loadMealPlan(id)
     }
 
+    // Loads one meal plan by ID for display.
     loadMealPlan(id: number): void {
         this.loading.set(true)
         this.error.set('')
@@ -43,6 +48,7 @@ export class MealPlanDetail implements OnInit {
         })
     }
 
+    // Deletes the current meal plan and returns to the list.
     deleteMealPlan(): void {
         const currentMealPlan = this.mealPlan()
 

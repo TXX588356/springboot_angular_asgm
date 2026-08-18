@@ -13,8 +13,10 @@ export class AuthService {
   private apiUrl = '/api/auth'
   private storageKey = 'mealPlanner.currentUser'
 
+  // Holds the current user so components can react to login/logout state.
   currentUser = signal<AuthUser | null>(null)
 
+  // Restores any cached session user when the service is created in the browser.
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: object,
@@ -26,12 +28,14 @@ export class AuthService {
     }
   }
 
+  // Sends a registration request to create a new backend account.
   register(request: RegisterRequest): Observable<AuthUser> {
     return this.http.post<AuthUser>(`${this.apiUrl}/register`, request, {
       withCredentials: true,
     })
   }
 
+  // Sends login credentials and stores the returned authenticated user.
   login(request: LoginRequest): Observable<AuthUser> {
     return this.http.post<AuthUser>(`${this.apiUrl}/login`, request, {
       withCredentials: true,
@@ -41,6 +45,7 @@ export class AuthService {
     )
   }
 
+  // Loads the current user from the backend and clears local state if the session is invalid.
   loadCurrentUser(): Observable<AuthUser | null> {
     return this.http.get<AuthUser>(`${this.apiUrl}/me`, {
       withCredentials: true,
@@ -53,6 +58,7 @@ export class AuthService {
     )
   }
 
+  // Logs out on the backend and clears the cached frontend session.
   logout(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/logout`, {}, {
       withCredentials: true,
@@ -61,10 +67,12 @@ export class AuthService {
     )
   }
 
+  // Checks whether the backend currently recognizes the user as authenticated.
   isAuthenticated(): Observable<boolean> {
     return this.loadCurrentUser().pipe(map((user) => user !== null))
   }
 
+  // Stores the authenticated user in memory and browser session storage.
   private setSessionUser(user: AuthUser): void {
     this.currentUser.set(user)
 
@@ -73,6 +81,7 @@ export class AuthService {
     }
   }
 
+  // Clears the authenticated user from memory and browser session storage.
   clearSessionUser(): void {
     this.currentUser.set(null)
 
@@ -81,6 +90,7 @@ export class AuthService {
     }
   }
 
+  // Reads and validates the cached session user from browser session storage.
   private readSessionUser(): AuthUser | null {
     if (!isPlatformBrowser(this.platformId)) {
       return null

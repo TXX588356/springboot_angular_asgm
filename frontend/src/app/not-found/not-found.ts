@@ -7,8 +7,10 @@ import { Router } from "@angular/router";
     styleUrl: './not-found.css'
 })
 export class NotFound {
+    // Injects Router for programmatic navigation from the 404 page.
     constructor(private router: Router) {}
 
+    // Sends the user back to the dashboard.
     goToDashboard(): void {
         // Programmatic navigation
         this.router.navigate(['/dashboard'])

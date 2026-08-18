@@ -26,6 +26,7 @@ public class AuthService implements UserDetailsService {
     private final UserSessionRepository userSessionRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // Injects repositories and password encoder used for account and session operations.
     public AuthService(
         UserAccountRepository userAccountRepository,
         UserSessionRepository userSessionRepository,
@@ -36,7 +37,9 @@ public class AuthService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Registers a new user account after checking username and email uniqueness.
     public AuthResponse register(RegisterRequest request) {
+        // Normalize unique fields before checking duplicates so casing/spacing cannot bypass constraints.
         String username = request.username().trim();
         String email = request.email().trim();
 
@@ -56,6 +59,7 @@ public class AuthService implements UserDetailsService {
         return toResponse(userAccountRepository.save(userAccount), null);
     }
 
+    // Retrieves a user account by username and returns it as an authentication response.
     public AuthResponse getByUsername(String username) {
         UserAccount userAccount = userAccountRepository.findByUsernameIgnoreCase(username)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User was not found"));
@@ -63,6 +67,7 @@ public class AuthService implements UserDetailsService {
         return toResponse(userAccount, null);
     }
 
+    // Retrieves a user account by email and returns it as an authentication response.
     public AuthResponse getByEmail(String email) {
         UserAccount userAccount = userAccountRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User was not found"));
@@ -71,10 +76,12 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
+    // Creates a new session token for the user identified by email.
     public AuthResponse createSession(String email) {
         UserAccount userAccount = userAccountRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User was not found"));
 
+        // Opportunistically clean expired sessions whenever a new one is created.
         userSessionRepository.deleteByExpiresAtBefore(LocalDateTime.now());
 
         UserSession userSession = new UserSession();
@@ -87,10 +94,12 @@ public class AuthService implements UserDetailsService {
     }
 
     @Transactional
+    // Resolves a valid session token to its owning user account.
     public UserAccount getUserBySessionToken(String token) {
         UserSession userSession = userSessionRepository.findByToken(token)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid session"));
 
+        // Expired tokens are removed immediately so future requests fail without repeating date checks.
         if (userSession.getExpiresAt().isBefore(LocalDateTime.now())) {
             userSessionRepository.delete(userSession);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Session expired");
@@ -99,11 +108,13 @@ public class AuthService implements UserDetailsService {
         return userSession.getUserAccount();
     }
 
+    // Returns the authenticated user data for an existing session token.
     public AuthResponse getBySessionToken(String token) {
         return toResponse(getUserBySessionToken(token), token);
     }
 
     @Transactional
+    // Deletes a session token when the caller logs out or ends a session.
     public void deleteSession(String token) {
         if (token != null && !token.isBlank()) {
             userSessionRepository.deleteByToken(token);
@@ -111,6 +122,7 @@ public class AuthService implements UserDetailsService {
     }
 
     @Override
+    // Loads a user by email for Spring Security authentication.
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserAccount userAccount = userAccountRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new UsernameNotFoundException("User was not found"));
@@ -122,6 +134,7 @@ public class AuthService implements UserDetailsService {
             .build();
     }
 
+    // Converts a user account and optional session token into the API response DTO.
     private AuthResponse toResponse(UserAccount userAccount, String sessionToken) {
         return new AuthResponse(
             userAccount.getId(),

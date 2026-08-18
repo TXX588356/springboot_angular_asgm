@@ -31,10 +31,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class MealPlanController {
     private final MealPlanService mealPlanService;
 
+    // Injects the service used by meal plan endpoints.
     public MealPlanController(MealPlanService mealPlanService) {
         this.mealPlanService = mealPlanService;
     }
 
+    // Lists meal plans for the authenticated user with optional date and meal-type filters.
     @GetMapping
     public List<MealPlanResponse> getMealPlans(
         Principal principal,
@@ -45,11 +47,13 @@ public class MealPlanController {
         return mealPlanService.getMealPlans(principal.getName(), mealDate, mealType);
     }
 
+    // Gets one meal plan owned by the authenticated user.
     @GetMapping("/{id}")
     public MealPlanResponse getMealPlanById(Principal principal, @PathVariable Long id) {
         return mealPlanService.getMealPlanById(principal.getName(), id);
     }
 
+    // Creates a meal plan for the authenticated user.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MealPlanResponse createMealPlan(
@@ -60,11 +64,13 @@ public class MealPlanController {
         return mealPlanService.createMealPlan(principal.getName(), request);
     }
 
+    // Updates a meal plan owned by the authenticated user.
     @PutMapping("/{id}")
     public MealPlanResponse updateMealPlan(Principal principal, @PathVariable Long id, @Valid @RequestBody MealPlanRequest request) {
         return mealPlanService.updateMealPlan(principal.getName(), id, request);
     }
 
+    // Deletes a meal plan owned by the authenticated user.
     @DeleteMapping("/{id}")
     public void deleteMealPlan(Principal principal, @PathVariable Long id) {
         mealPlanService.deleteMealPlan(principal.getName(), id);

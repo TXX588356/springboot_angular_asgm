@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { authTokenInterceptor } from './auth/auth-token.interceptor';
 
+// Browser application providers for routing, API interception, hydration, and global errors.
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),

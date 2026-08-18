@@ -2,6 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 
 const storageKey = 'mealPlanner.currentUser'
 
+// Adds the stored bearer token to backend API requests.
 export const authTokenInterceptor: HttpInterceptorFn = (request, next) => {
   if (!request.url.startsWith('/api') || typeof sessionStorage === 'undefined') {
     return next(request)

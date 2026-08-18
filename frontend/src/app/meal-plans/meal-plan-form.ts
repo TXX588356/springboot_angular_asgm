@@ -8,6 +8,7 @@ import { MealPlanService } from "../services/meal-plan-service"
 import { MealPlanRequest } from "../models/meal-plan-requests"
 import { MealPlanItemRequest } from "../models/meal-plan-item-request"
 
+// Local table row that combines selected food details with editable quantity.
 interface SelectedMealPlanItem {
     foodItemId: number
     foodName: string
@@ -23,7 +24,9 @@ interface SelectedMealPlanItem {
     styleUrl: './meal-plan-form.css'
 })
 export class MealPlanForm implements OnInit {
+    // Indicates whether a form load or save request is in progress.
     loading = signal<boolean>(false)
+    // Stores the form-level error message.
     error = signal<string>('')
 
     // Catalogue foods are loaded so users can choose existing foods for the meal plan.
@@ -32,14 +35,18 @@ export class MealPlanForm implements OnInit {
     // Selected items are kept outside the form because they are a repeatable table, not one input.
     selectedItems = signal<SelectedMealPlanItem[]>([])
 
+    // Meal plan ID from the route when editing an existing plan.
     mealPlanId: number | null = null
+    // True when the form is editing instead of creating.
     isEditMode = false
 
     // Used by the template to render meal type options.
     mealTypes: MealType[] = ['BREAKFAST', 'LUNCH', 'DINNER', 'SNACK']
 
+    // Reactive form that captures meal-plan metadata plus temporary item picker values.
     mealPlanForm: FormGroup
 
+    // Builds the form and injects route, navigation, food, and meal-plan dependencies.
     constructor(
         private fb: FormBuilder,
         private route: ActivatedRoute,
@@ -58,6 +65,7 @@ export class MealPlanForm implements OnInit {
         })
     }
 
+    // Loads catalogue foods and switches to edit mode when a route ID is present.
     ngOnInit(): void {
         this.loadFoods()
 
@@ -71,6 +79,7 @@ export class MealPlanForm implements OnInit {
         }
     }
 
+    // Loads the food catalogue options used by the item picker.
     loadFoods(): void {
         // Load all foods so the user can build a meal plan from catalogue records.
         this.foodService.getFoods('', '', undefined, 'name', 'asc').subscribe({
@@ -83,6 +92,7 @@ export class MealPlanForm implements OnInit {
         })
     }
 
+    // Loads an existing meal plan and maps its rows into editable selected items.
     loadMealPlan(id: number): void {
         this.loading.set(true)
         this.error.set('')
@@ -116,6 +126,7 @@ export class MealPlanForm implements OnInit {
         })
     }
 
+    // Adds the currently selected food and quantity to the editable item table.
     addSelectedFood(): void {
         // Read the temporary food selector and quantity input.
         const foodItemId = Number(this.mealPlanForm.get('foodItemId')?.value)
@@ -181,6 +192,7 @@ export class MealPlanForm implements OnInit {
         quantityControl?.markAsPristine()
     }
 
+    // Removes one food row from the editable item table.
     removeSelectedFood(foodItemId: number): void {
         // Remove a selected row without changing the rest of the form
         this.selectedItems.set(
@@ -188,11 +200,13 @@ export class MealPlanForm implements OnInit {
         )
     }
 
+    // Total calories across the currently selected meal-plan rows.
     get totalCalories(): number {
         // Running total shown in the form before saving.
         return this.selectedItems().reduce((total, item) => total + item.lineSubtotalCalories, 0)
     }
 
+    // Converts form state and selected rows into the backend request payload.
     buildRequest(): MealPlanRequest {
         const value = this.mealPlanForm.getRawValue()
 
@@ -211,6 +225,7 @@ export class MealPlanForm implements OnInit {
         }
     }
 
+    // Validates and submits a create or update request.
     saveMealPlan(): void {
         // Only validate the actual meal-plan metadata here; foodItemId is just a temporary picker.
          if (this.mealPlanForm.get('name')?.invalid ||
@@ -255,6 +270,7 @@ export class MealPlanForm implements OnInit {
         })
     }
 
+    // Leaves the form without saving changes.
     cancel(): void {
         // Edit mode returns to detail; create mode returns to meal plan list.
         if (this.isEditMode && this.mealPlanId != null) {

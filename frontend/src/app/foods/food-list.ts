@@ -13,17 +13,26 @@ import { ActivatedRoute, Router, RouterLink } from "@angular/router";
     styleUrl: './food-list.css',
 })
 export class FoodList implements OnInit {
+    // Food items returned by the current search/filter request.
     foods = signal<FoodItem[]>([])
+    // Indicates whether the food list is loading.
     loading = signal<boolean>(false)
+    // Stores the list-level error message.
     error = signal<string>('')
 
+    // Current text search value.
     searchText = ''
+    // Current category filter value.
     category = ''
+    // Current maximum calorie filter value.
     maxCalories: undefined | number = undefined
 
+    // Current sort field.
     sortBy = 'name'
+    // Current sort direction.
     direction = 'asc'
 
+    // Injects API, route, navigation, and platform dependencies.
     constructor(
         private foodService: FoodService,
         private route: ActivatedRoute,
@@ -50,6 +59,7 @@ export class FoodList implements OnInit {
         this.applyQuery(false)
     }
 
+    // Applies the current search/filter/sort state and optionally writes it to the URL.
     applyQuery(updateRoute = true): void {
         if (updateRoute) {
             // Angular requirement 12: pass filters as query parameters between routed views.
@@ -88,6 +98,7 @@ export class FoodList implements OnInit {
         })
     }
 
+    // Deletes a food item and reloads the current result set.
     deleteFood(id: number): void {
         this.foodService.deleteFood(id).subscribe({
             next: () => {
@@ -99,18 +110,23 @@ export class FoodList implements OnInit {
         })
     }
 
+    // Number of food cards shown per page.
     pageSize = 6
+    // Current pagination page.
     currentPage = 1
 
+    // Total number of pages for the current result set.
     get totalPages(): number {
         return Math.ceil(this.foods().length / this.pageSize)
     }
 
+    // Food items visible on the current page.
     get paginatedFoods(): FoodItem[] {
         const start = (this.currentPage - 1) * this.pageSize
         return this.foods().slice(start, start + this.pageSize)
     }
 
+    // Moves pagination to a valid page number.
     goToPage(page: number): void {
         if (page < 1 || page > this.totalPages) {
             return
@@ -119,6 +135,7 @@ export class FoodList implements OnInit {
         this.currentPage = page
     }
 
+    // Updates page size and resets pagination to the first page.
     changePageSize(size: string): void {
         this.pageSize = Number(size)
         this.currentPage = 1

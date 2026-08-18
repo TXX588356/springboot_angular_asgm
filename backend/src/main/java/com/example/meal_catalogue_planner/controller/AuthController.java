@@ -30,6 +30,7 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
 
+    // Injects authentication services used by the auth endpoints.
     public AuthController(
         AuthService authService,
         AuthenticationManager authenticationManager
@@ -38,6 +39,7 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
+    // Handles account registration requests.
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
@@ -45,6 +47,7 @@ public class AuthController {
         return authService.register(request);
     }
 
+    // Authenticates login credentials and returns a session token.
     @PostMapping("/login")
     public AuthResponse login(
         @Valid @RequestBody AuthRequest request
@@ -61,6 +64,7 @@ public class AuthController {
         }
     }
 
+    // Returns the currently authenticated user's account data.
     @GetMapping("/me")
     public AuthResponse me(Principal principal, HttpServletRequest request) {
         String token = resolveBearerToken(request);
@@ -76,6 +80,7 @@ public class AuthController {
         return authService.getByEmail(principal.getName());
     }
 
+    // Ends the current bearer-token or HTTP session authentication state.
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void logout(HttpServletRequest request) {
@@ -88,6 +93,7 @@ public class AuthController {
         }
     }
 
+    // Extracts a bearer token from the Authorization header.
     private String resolveBearerToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
 

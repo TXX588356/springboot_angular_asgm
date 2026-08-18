@@ -8,10 +8,10 @@ import { NgClass } from '@angular/common';
  imports: [NgClass]
 })
 export class NutritionBadge {
-	// Parent sends calories into its component.
+	// Parent component sends calories into this badge.
 	@Input() calories!: number
 
-	  // Return badge color based on calorie level.
+	// Returns the badge color class based on calorie level.
   get badgeClass(): string {
     if (this.calories >= 600) {
       return 'badge-error';
@@ -24,7 +24,7 @@ export class NutritionBadge {
     return 'badge-success';
   }
 
-	// Set different badge text based on calories.
+	// Returns the badge text label based on calorie level.
 	get level(): string {
 		if (this.calories >= 600) return 'high'
 		if (this.calories >= 300) return 'medium'

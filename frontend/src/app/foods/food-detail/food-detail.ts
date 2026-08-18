@@ -10,16 +10,20 @@ import { FoodService } from "../../services/food.service";
     styleUrl: './food-detail.css',
 })
 export class FoodDetail implements OnInit {
+    // Selected food item loaded from the backend.
     food = signal<FoodItem | null>(null)
+    // Indicates whether the detail view is loading.
     loading = signal<boolean>(false)
+    // Stores the detail-view error message.
     error = signal<string>('')
 
+    // Injects route access and food API service dependencies.
     constructor(
         private route: ActivatedRoute,
         private foodService: FoodService
     ) {}
 
-    // Load one food item using the ID from route
+    // Loads one food item using the ID from the route.
     ngOnInit(): void {
         const id = Number(this.route.snapshot.paramMap.get('id'))
 

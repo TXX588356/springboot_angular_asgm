@@ -9,10 +9,14 @@ import { FoodService } from "../../services/food.service";
     styleUrl: './food-nutrition.css',
 })
 export class FoodNutrition implements OnInit {
+    // Food item whose nutrition values are being shown.
     food = signal<FoodItem | null>(null)
+    // Indicates whether nutrition data is loading.
     loading = signal<boolean>(false)
+    // Stores the nutrition-view error message.
     error = signal<string>('')
 
+    // Injects access to the parent route ID and food API service.
     constructor(
         private route: ActivatedRoute,
         private foodService: FoodService

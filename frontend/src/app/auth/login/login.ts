@@ -11,11 +11,15 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
+  // Indicates whether a login request is currently in progress.
   loading = signal<boolean>(false)
+  // Stores the login error message shown to the user.
   error = signal<string>('')
 
+  // Reactive form that captures login credentials.
   loginForm: FormGroup
 
+  // Builds the login form and injects authentication/navigation dependencies.
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -29,6 +33,7 @@ export class Login implements OnInit {
     })
   }
 
+  // Redirects already-authenticated browser users away from the login page.
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
       return
@@ -41,6 +46,7 @@ export class Login implements OnInit {
     })
   }
 
+  // Validates the form, submits credentials, and navigates to the dashboard on success.
   login(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched()

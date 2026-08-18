@@ -23,11 +23,12 @@ import jakarta.persistence.criteria.Predicate;
 public class FoodItemService {
     private final FoodItemRepository foodItemRepository;
 
+    // Injects the repository used for food catalogue persistence and queries.
     public FoodItemService(FoodItemRepository foodItemRepository) {
         this.foodItemRepository = foodItemRepository;
     }
 
-    // Search, filter, sorting all can be applied together
+    // Builds a dynamic query so search, category filter, calorie cap, and sorting can be combined.
     public List<FoodItem> findFoods(
         String name, 
         String category,
@@ -41,10 +42,12 @@ public class FoodItemService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (name != null && !name.isBlank()) {
+                // Name search is partial and case-insensitive for catalogue-style browsing.
                 predicates.add(criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("name")),
                     "%" + name.toLowerCase()  + "%"));
             }
+
             if (category != null && !category.isBlank()) {
                 predicates.add(criteriaBuilder.like(
                     criteriaBuilder.lower(root.get("category")),
@@ -65,10 +68,11 @@ public class FoodItemService {
 
     }
 
-    // Only allow sorting by real FoodItem fields.
+    // Builds a safe Sort object from client-provided sort field and direction values.
     private Sort buildSort(String sortBy, String direction) {
         String requestedSort = sortBy == null ? "name" : sortBy;
 
+        // Do not pass arbitrary client strings into Sort because invalid properties fail at runtime.
         String safeSortBy = switch (requestedSort) {
             case "name", "category", "calories", "price" -> requestedSort;
             default -> "name";
@@ -81,7 +85,7 @@ public class FoodItemService {
         return Sort.by(safeSortBy).ascending();
     }
 
-    // Get every food item sotred by selected field.
+    // Get every food item sorted by selected field.
     public List<FoodItem> getAllFoods(String sortBy, String direction) {
         Sort sort = Sort.by(sortBy);
 
@@ -94,6 +98,7 @@ public class FoodItemService {
         return foodItemRepository.findAll(sort);
     }
 
+    // Gets one food item by ID or returns a 404 error when it does not exist.
     public FoodItem getFoodById(Long id) {
         return foodItemRepository.findById(id)
         // Error handling
@@ -103,7 +108,7 @@ public class FoodItemService {
         ));
     }
 
-    // Create new food item
+    // Creates a new food item from a request DTO.
     public FoodItem createFood(FoodRequest request) {
         FoodItem foodItem = new FoodItem();
         foodItem.setId(null);
@@ -111,7 +116,7 @@ public class FoodItemService {
         return foodItemRepository.save(foodItem);
     }
 
-    // Update existing food item
+    // Updates an existing food item with values from a request DTO.
     public FoodItem updateFood(Long id, FoodRequest request) {
         FoodItem existingFood = getFoodById(id);
 
@@ -120,6 +125,7 @@ public class FoodItemService {
         return foodItemRepository.save(existingFood);
     }
 
+    // Copies editable request fields onto a FoodItem entity.
     private void applyFoodRequest(FoodItem foodItem, FoodRequest request) {
         // Request DTO keeps JSON input separate from the JPA entity and avoids deserialization issues.
         foodItem.setName(request.name());
@@ -133,16 +139,19 @@ public class FoodItemService {
         foodItem.setPrice(defaultDecimal(request.price()));
     }
 
+    // Resolves the stored category code set from explicit codes or the legacy category field.
     private Set<String> resolveCategoryCodes(FoodRequest request) {
         Set<String> categoryCodes = new LinkedHashSet<>();
 
         if (request.categoryCodes() != null) {
+            // Preserve request order while removing blank values and duplicate category codes.
             request.categoryCodes().stream()
                 .filter(code -> code != null && !code.isBlank())
                 .map(String::trim)
                 .forEach(categoryCodes::add);
         }
 
+        // Older clients may still submit only category, so keep it as a fallback category code.
         if (categoryCodes.isEmpty() && request.category() != null && !request.category().isBlank()) {
             categoryCodes.add(request.category().trim());
         }
@@ -150,11 +159,12 @@ public class FoodItemService {
         return categoryCodes;
     }
 
+    // Returns zero when an optional decimal value is not provided.
     private BigDecimal defaultDecimal(BigDecimal value) {
         return value == null ? BigDecimal.ZERO : value;
     }
 
-    // Delete food. If it is used by a meal plan later, return 409
+    // Deletes a food item, returning 409 if existing meal plans still reference it.
     public void deleteFood(Long id) {
         FoodItem foodItem = getFoodById(id);
 
@@ -168,17 +178,17 @@ public class FoodItemService {
         }
     }
 
-    // Search food by name
+    // Searches food items by partial name match.
     public List<FoodItem> searchFoodsByName(String name) {
         return foodItemRepository.findByNameContainingIgnoreCase(name);
     }
 
-    // Get foods by category
+    // Gets food items matching either category name or category code.
     public List<FoodItem> getFoodsByCategory(String category) {
         return foodItemRepository.findCategoryOrCategoryCodeIgnoreCase(category);
     }
 
-    // Filter foods by cat and max calories using JPQL query.
+    // Filters food items by category and maximum calories using the repository JPQL query.
     public List<FoodItem> filterFoods(String category, Integer maxCalories) {
         return foodItemRepository.filterFoods(category, maxCalories);
     }

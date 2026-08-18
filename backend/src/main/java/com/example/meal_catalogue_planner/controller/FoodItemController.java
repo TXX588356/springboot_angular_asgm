@@ -29,10 +29,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class FoodItemController {
     private final FoodItemService foodItemService;
 
+    // Injects the service used by food catalogue endpoints.
     public FoodItemController(FoodItemService foodItemService) {
         this.foodItemService = foodItemService;
     }
 
+    // Lists food items with optional search, filter, calorie cap, and sorting query parameters.
     @GetMapping
     public List<FoodItem> findFoods(
         @RequestParam(required = false) String name,
@@ -55,6 +57,7 @@ public class FoodItemController {
     // }
 
     // GET /api/foods/{id}
+    // Gets one food item by its path ID.
     @GetMapping("/{id}")
     public FoodItem getFoodById(@PathVariable Long id) {
         // Spring Boot requirement 1: path parameter maps the URL food ID to a backend lookup.
@@ -62,6 +65,7 @@ public class FoodItemController {
     }
 
     // POST /api/foods
+    // Creates a new food item from the request body.
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FoodItem createFood(@Valid @RequestBody FoodRequest request) {
@@ -70,6 +74,7 @@ public class FoodItemController {
     }
 
     // PUT /api/foods/{id}
+    // Updates an existing food item selected by its path ID.
     @PutMapping("/{id}")
     public FoodItem updateFood(@PathVariable Long id,@Valid @RequestBody FoodRequest request) {
        // Spring Boot requirements 2 and 4: annotated handler updates an existing database row.
@@ -78,6 +83,7 @@ public class FoodItemController {
 
     // DELETE /api/foods/{id}
     // delete one food item
+    // Deletes one food item selected by its path ID.
     @DeleteMapping("/{id}")
     public void deleteFood(@PathVariable Long id) {
         // Spring Boot requirements 2 and 4: annotated handler deletes a database row by ID.
@@ -86,6 +92,7 @@ public class FoodItemController {
 
     // GET /api/foods/search?name={param}
     // search food name that contains {param}
+    // Searches food items whose names contain the provided query text.
     @GetMapping("/search")
     public List<FoodItem> searchFoods(@RequestParam String name) {
         return foodItemService.searchFoodsByName(name);
@@ -93,12 +100,14 @@ public class FoodItemController {
 
     // GET /api/foods/category/{category}
     // Get all {category} foods
+    // Lists food items matching a category path value.
     @GetMapping("/category/{category}")
     public List<FoodItem> getFoodsByCategory(@PathVariable String category) {
         return foodItemService.getFoodsByCategory(category);
     }
 
     // GET /api/foods/filter?category={category}&maxCalories={maxCalories}
+    // Filters food items with optional category and maximum calorie query parameters.
     @GetMapping("/filter")
     public List<FoodItem> filterFoods(
         @RequestParam(required = false) String category,

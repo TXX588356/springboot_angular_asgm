@@ -1,5 +1,6 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
+// Server render modes for dynamic routes and the prerendered fallback route.
 export const serverRoutes: ServerRoute[] = [
   {
     path: 'foods/:id/edit',

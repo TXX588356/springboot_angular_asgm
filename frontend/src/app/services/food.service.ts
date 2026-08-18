@@ -11,6 +11,7 @@ import { FoodRequest } from "../models/food-request";
 export class FoodService {
     private apiUrl = '/api/foods'
 
+    // Injects HttpClient for food catalogue API requests.
     constructor(private http: HttpClient) {}
 
     // Get all foods with optional applied fields

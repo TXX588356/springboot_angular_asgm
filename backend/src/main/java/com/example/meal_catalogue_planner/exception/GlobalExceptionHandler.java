@@ -19,8 +19,10 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
+// Centralizes REST exception handling so API errors share one response shape.
 public class GlobalExceptionHandler {
     
+    // Handles request body validation failures from @Valid DTOs.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleValidation(
         MethodArgumentNotValidException ex,
@@ -46,6 +48,7 @@ public class GlobalExceptionHandler {
         HttpMessageNotReadableException.class,
         MethodArgumentTypeMismatchException.class
     })
+    // Handles malformed JSON and invalid request parameter type errors.
     public ResponseEntity<ApiErrorResponse> handleBadRequest(
         Exception ex,
         HttpServletRequest request
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Handles service-layer exceptions that already carry an HTTP status.
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiErrorResponse> handleResponseStatus(
         ResponseStatusException ex,
@@ -77,6 +81,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Handles failed or missing authentication.
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthentication(
         AuthenticationException ex,
@@ -92,6 +97,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Handles authenticated requests that do not have permission for the resource.
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleAccessDenied(
         AccessDeniedException ex,
@@ -106,6 +112,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Handles any unanticipated exception with a generic 500 response.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(
         Exception ex,
@@ -121,6 +128,7 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Builds the shared API error response payload and status wrapper.
     private ResponseEntity<ApiErrorResponse> buildResponse(
         HttpStatus status, 
         String error,

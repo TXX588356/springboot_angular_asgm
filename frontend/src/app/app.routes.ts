@@ -12,6 +12,7 @@ import { Login } from './auth/login/login';
 import { Register } from './auth/register/register';
 import { authGuard } from './auth/auth.guard';
 
+// Defines all browser routes and applies auth protection to application pages.
 export const routes: Routes = [
 	// Angular requirements 11 and 13: routes include redirect, wildcard, parameterized paths, and a nested nutrition child route.
 	{

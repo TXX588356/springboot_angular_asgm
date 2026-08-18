@@ -13,7 +13,7 @@ export class FoodCard {
     // FoodList sends one food item into this component.
     @Input() food!: FoodItem
 
-    // FoodCard sends the seleced food ID back to FoodList.
+    // FoodCard sends the selected food ID back to FoodList.
     @Output() deleteFood = new EventEmitter<number>()
 
     // Tell the parent component which food should be deleted.

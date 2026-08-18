@@ -5,11 +5,13 @@ import { CanActivateFn, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
+// Protects routes by requiring a valid browser session before navigation.
 export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService)
   const router = inject(Router)
   const platformId = inject(PLATFORM_ID)
 
+  // Server-side rendering cannot read session storage, so protected routes resolve to login.
   if (!isPlatformBrowser(platformId)) {
     return router.createUrlTree(['/login'])
   }

@@ -11,14 +11,20 @@ import { FoodRequest } from "../../models/food-request";
     styleUrl: './food-form.css'
 })
 export class FoodForm implements OnInit {
+    // Indicates whether a save or load request is in progress.
     loading = signal<boolean>(false)
+    // Stores the form-level error message.
     error = signal<string>('')
 
+    // Food ID from the route when editing an existing item.
     foodId: number | null = null
+    // True when the form is editing instead of creating.
     isEditMode = false
 
+		// Reactive form that captures food and nutrition fields.
 		foodForm: FormGroup
 
+    // Builds the food form and injects services for API calls and navigation.
     constructor(
         private fb: FormBuilder,
         private foodService: FoodService,
@@ -55,7 +61,7 @@ export class FoodForm implements OnInit {
         }
     }
 
-    // Load existing food data into the food form for edit mode
+    // Loads existing food data into the food form for edit mode.
     loadFood(id: number): void {
         this.loading.set(true)
         this.error.set('')
@@ -84,7 +90,7 @@ export class FoodForm implements OnInit {
         })
     }
 
-    // Convert form value into the asme JSON shape expected
+    // Converts form values into the JSON shape expected by the backend.
     buildRequest(): FoodRequest {
 			const value = this.foodForm.getRawValue()
 
@@ -100,7 +106,7 @@ export class FoodForm implements OnInit {
 			}
     }
 
-    // Submit create or update req
+    // Submits a create or update request depending on the current form mode.
 		saveFood(): void {
 			if (this.foodForm.invalid) {
 				this.foodForm.markAllAsTouched()
@@ -138,7 +144,7 @@ export class FoodForm implements OnInit {
 			})
 		}
 
-		// Go back to food list without saving
+		// Goes back to the food list without saving changes.
 		cancel(): void {
 			this.router.navigate(['/foods'])
 		}
