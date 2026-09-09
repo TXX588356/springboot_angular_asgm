@@ -60,7 +60,7 @@ Each logged-in user has their own meal plans. Food catalogue records are shared 
 - Maven, or use the included `backend/mvnw`
 - Node.js and npm
 - Angular CLI, or run Angular scripts through npm
-- PostgreSQL running locally
+- PostgreSQL running locally, or Docker/Podman to run PostgreSQL from an image
 - Optional: Podman, if you use the existing `make dev-env-start` workflow
 
 ## Database Configuration
@@ -69,19 +69,57 @@ The backend is configured in `backend/src/main/resources/application.properties`
 
 ```properties
 server.port=8085
-spring.datasource.url=jdbc:postgresql://localhost:5434/meal_planner
-spring.datasource.username=postgres
-spring.datasource.password=postgres
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5434/meal_planner}
+spring.datasource.username=${DB_USER:postgres}
+spring.datasource.password=${DB_PASSWORD:postgres}
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-Create a PostgreSQL database named `meal_planner` and make sure it is reachable on port `5434` with the configured username and password.
+The default local database values are also shown in `.env.example`:
+
+```env
+DB_URL=jdbc:postgresql://localhost:5434/meal_planner
+DB_USER=postgres
+DB_PASSWORD=postgres
+```
+
+### Create the Local Database Container
+
+If you use Podman, create the PostgreSQL container once with the `postgres:17` image:
+
+```bash
+podman run -d \
+  --name springboot-db \
+  -p 5434:5432 \
+  -e POSTGRES_DB=meal_planner \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -v springboot-db-data:/var/lib/postgresql/data \
+  postgres:17
+```
+
+If you use Docker instead, run the same container with Docker:
+
+```bash
+docker run -d \
+  --name springboot-db \
+  -p 5434:5432 \
+  -e POSTGRES_DB=meal_planner \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -v springboot-db-data:/var/lib/postgresql/data \
+  postgres:17
+```
+
+This creates a PostgreSQL database named `meal_planner` and exposes it at `localhost:5434`. The `springboot-db-data` volume keeps the database data, so restarting the container does not reset the database.
 
 If you already have a Podman container named `springboot-db`, start it with:
 
 ```bash
 make dev-env-start
 ```
+
+This command only starts the existing Podman container. It does not create a fresh database each time.
 
 ## Running Locally
 
