@@ -4,7 +4,9 @@
 		<p class="text-base-content/70">Plan foods by date, meal type, and quantity.</p>
 	</div>
 
-	<a routerLink="/meal-plans/new" class="btn btn-primary">Add Meal Plan</a>
+	@if (mealPlans().length > 0) {
+		<a routerLink="/meal-plans/new" class="btn btn-primary">Add Meal Plan</a>
+	}
 </div>
 
 <div class="filter-panel">
