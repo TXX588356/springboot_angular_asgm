@@ -1,0 +1,36 @@
+services:
+  postgres_db:
+    image: postgres:18.6-alpine3.23
+    container_name: springboot_db
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=meal_planner
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+    - "8085:8085"
+    environment:
+      - DB_URL=jdbc:postgresql://postgres_db:5432/meal_planner
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - postgres_db
+
+  frontend:
+    build:
+      context: ./frontend
+    ports: 
+      - "4200:4000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
