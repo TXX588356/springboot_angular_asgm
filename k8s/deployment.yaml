@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: meal-planner-dev
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-db
+  namespace: meal-planner-dev
+  labels:
+    app: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      containers:
+      - name: postgres-db
+        image: postgres:17
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: POSTGRES_DB
+          value: meal_planner
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meal-backend
+  namespace: meal-planner-dev
+  labels:
+    app: meal-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meal-backend
+  template:
+    metadata:
+      labels:
+        app: meal-backend
+    spec:
+      containers:
+      - name: meal-backend
+        image: leetx11/meal-backend:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8085
+        env:
+        - name: DB_URL
+          value: jdbc:postgresql://postgres-db:5432/meal_planner
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASSWORD
+          value: postgres
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meal-frontend
+  namespace: meal-planner-dev
+  labels:
+    app: meal-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meal-frontend
+  template:
+    metadata:
+      labels:
+        app: meal-frontend
+    spec:
+      containers:
+      - name: meal-frontend
+        image: leetx11/meal-frontend:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+        env:
+        - name: API_TARGET
+          value: http://meal-backend:8085

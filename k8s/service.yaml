@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: meal-planner-dev
+spec:
+  selector:
+    app: postgres-db
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meal-backend
+  namespace: meal-planner-dev
+spec:
+  selector:
+    app: meal-backend
+  ports:
+  - port: 8085
+    targetPort: 8085
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meal-frontend
+  namespace: meal-planner-dev
+spec:
+  selector:
+    app: meal-frontend
+  ports:
+  - port: 4200
+    targetPort: 4000
