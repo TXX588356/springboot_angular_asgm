@@ -73,7 +73,7 @@ jobs:
     needs: [backend-ci, frontend-ci]
     runs-on: [self-hosted, kind-local]
 
-    if: github.event_name == 'push' 
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout repo
