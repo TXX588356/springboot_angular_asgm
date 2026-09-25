@@ -71,9 +71,9 @@ jobs:
   deploy-to-kind: 
     name: Deploy to kind
     needs: [backend-ci, frontend-ci]
-    runs-on: self-hosted
+    runs-on: [self-hosted, kind-local]
 
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push' 
 
     steps:
       - name: Checkout repo
@@ -89,7 +89,7 @@ jobs:
         run: |
           if ! kind get clusters | grep -qx "${KIND_CLUSTER_NAME}"; then
             kind create cluster --name "${KIND_CLUSTER_NAME}"
-          FRONTEND_IMAGE
+          fi
       
       - name: Build Docker images
         run: |
