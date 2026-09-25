@@ -1,0 +1,121 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_requests:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  BACKEND_IMAGE: meal-backend
+  FRONTEND_IMAGE: meal-frontend
+  NAMESPACE: meal-planner-dev
+  KIND_CLUSTER_NAME: dev
+
+jobs:
+  backend-ci:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "25"
+        cache: maven
+
+    - name: Make Maven Wrapper executable
+      working-directory: backend
+      run: chmod +x mvnw
+    
+    - name: Test backend
+      working-directory: backend
+      run: ./mvnw test
+
+    - name: Build backend
+      working-directory: backend
+      run: ./mvnw package -DskipTests
+  
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Test frontend
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+  
+  deploy-to-kind: 
+    name: Deploy to kind
+    needs: [backend-ci, frontend-ci]
+    runs-on: self-hosted
+
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Check required tools
+        run: |
+          docker --version
+          kind --version
+          kubectl version --client=true
+
+      - name: Create kind cluster if missing
+        run: |
+          if ! kind get clusters | grep -qx "${KIND_CLUSTER_NAME}"; then
+            kind create cluster --name "${KIND_CLUSTER_NAME}"
+          FRONTEND_IMAGE
+      
+      - name: Build Docker images
+        run: |
+          docker build -t "${BACKEND_IMAGE}:${GITHUB_SHA}" ./backend
+          docker build -t "${FRONTEND_IMAGE}:${GITHUB_SHA}" ./frontend
+      
+      - name: Load images into kind
+        run: |
+          kind load docker-image "${BACKEND_IMAGE}:${GITHUB_SHA}" --name "${KIND_CLUSTER_NAME}"
+          kind load docker-image "${FRONTEND_IMAGE}:${GITHUB_SHA}" --name "${KIND_CLUSTER_NAME}"
+      
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+      
+      - name: Update app images
+        run: |
+          kubectl -n "${NAMESPACE}" set image deployment/meal-backend \
+            meal-backend="${BACKEND_IMAGE}:${GITHUB_SHA}"
+
+          kubectl -n "${NAMESPACE}" set image deployment/meal-frontend \
+            meal-frontend="${FRONTEND_IMAGE}:${GITHUB_SHA}"
+      
+      - name: Wait for rollout
+        run: |
+          kubectl -n "${NAMESPACE}" rollout status deployment/postgres-db --timeout=120s
+          kubectl -n "${NAMESPACE}" rollout status deployment/meal-backend --timeout=120s
+          kubectl -n "${NAMESPACE}" rollout status deployment/meal-frontend --timeout=120s
