@@ -119,3 +119,4 @@ jobs:
           kubectl -n "${NAMESPACE}" rollout status deployment/postgres-db --timeout=120s
           kubectl -n "${NAMESPACE}" rollout status deployment/meal-backend --timeout=120s
           kubectl -n "${NAMESPACE}" rollout status deployment/meal-frontend --timeout=120s
+          
